@@ -166,14 +166,15 @@ if __name__ == '__main__':
         if (args.count and not args.trim) or (args.trim and not args.count):
             parser.error("-c/--count and -t/--trim must be used together or not at all.")
 
-        if args.trim.lower() not in ["first", "f", "last", "l"]:
+        trim = None if not args.trim else args.trim.lower()
+        if (trim not in ["first", "f", "last", "l"]) and (trim is not None):
             parser.error("-t/--trim must be one of the following: 'first', 'last', 'f', 'l'")
 
         names = [n.strip() for n in open(args.names, "r").readlines() if n.strip() not in ("", None)] if args.names else [args.single]
 
         # Transform given name(s) using all predefined transforms
         if args.all:
-            usernames = transform_predefined(names, count=args.count, trim=args.trim.lower())
+            usernames = transform_predefined(names, count=args.count, trim=trim)
             if not args.output:
                 print(usernames)
 
@@ -182,14 +183,14 @@ if __name__ == '__main__':
             if args.format.lower() not in predefined.keys():
                 parser.error("Invalid format provided. Please refer to -l/--list.")
 
-            usernames = transform_predefined(names, format_=args.format.lower(), count=args.count, trim=args.trim.lower())
+            usernames = transform_predefined(names, format_=args.format.lower(), count=args.count, trim=trim)
             if not args.output:
                 print(usernames)
 
         # Transform given name(s) using a user designed transform
         elif args.design:
             format_   = args.design.lower().format(first="${first}", last="${last}", f="${f}", l="${l}")
-            usernames = transform_design(names, format_, count=args.count, trim=args.trim.lower())
+            usernames = transform_design(names, format_, count=args.count, trim=trim)
             if not args.output:
                 print(usernames)
 
