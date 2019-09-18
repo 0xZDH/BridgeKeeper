@@ -1,9 +1,8 @@
 # BridgeKeeper
 
-##### Transform names into different username formats.
-
 <p align="center"><img src="https://media.giphy.com/media/e9aSISpSTtU4w/giphy.gif"></p>
 
+Transform names into different username formats.
 
 ### Usage
 
