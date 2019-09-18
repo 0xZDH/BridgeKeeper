@@ -21,7 +21,7 @@ optional arguments:
                         Transform using a specific predefined username format.
   -d DESIGN, --design DESIGN
                         Design a custom username format to transform with.
-                        Format Examples: {first}{last}, {f}{last}[4]
+                        Format Examples: {first}x{last}, {f}-{last}
   -c COUNT, --count COUNT
                         How many characters to use from [First] or [Last]
                         during transform.
