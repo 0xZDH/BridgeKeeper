@@ -9,7 +9,7 @@
 
 ```
 usage: bridgekeeper.py [-h] (-l | -a | -f FORMAT | -d DESIGN) [-c COUNT]
-                       [-t [{first,last}]] [-n NAMES] [-s SINGLE] [-o OUTPUT]
+                       [-t TRIM] [-n NAMES] [-s SINGLE] [-o OUTPUT]
 
 Name transformer.
 
@@ -23,16 +23,16 @@ optional arguments:
                         Design a custom username format to transform with.
                         Format Examples: {first}x{last}, {f}-{last}
   -c COUNT, --count COUNT
-                        How many characters to use from [First] or [Last]
-                        during transform.
-  -t [{first,last}], --trim [{first,last}]
-                        Trim [First] or [Last] during transform.
+                        Number of characters to keep when trimming during
+                        transform. Must be used with -t/--trim
+  -t TRIM, --trim TRIM  Trim one of the following during transform: 'first',
+                        'last', 'f', 'l'. Must be used with -c/--count
   -n NAMES, --names NAMES
-                        File containing names formatted as '[First] [Last]'.
+                        File containing names formatted as 'First Last'.
   -s SINGLE, --single SINGLE
-                        Single name formatted as '[First] [Last]'.
+                        Single name formatted as 'First Last'.
   -o OUTPUT, --output OUTPUT
-                        Directory to write usernames to.
+                        Directory to write username files to.
 ```
 
 ### Examples

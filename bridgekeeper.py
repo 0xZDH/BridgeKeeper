@@ -46,14 +46,14 @@ def clean_template(t):
 
 # Trim first or last name according to user input
 def trim_name(name, count, trim):
-    if not count and not trim:
+    if not count or not trim:
         return (name[0], name[-1])
 
     else:
-        if trim == "first":
+        if trim in ("first", "f"):
             return (name[0][:count], name[-1])
 
-        elif trim == "last":
+        elif trim in ("last", "l"):
             return (name[0], name[-1][:count])
 
 
@@ -68,7 +68,7 @@ def list_transforms():
 def handle_dup(type_, username, usernames, count=1):
     tmp = username + str(count + 1)
     if tmp in usernames[type_]:
-        handle_dup(type_, username, usernames, count=(count + 1))
+        return handle_dup(type_, username, usernames, count=(count + 1))
 
     else:
         return tmp
@@ -143,11 +143,11 @@ if __name__ == '__main__':
     group.add_argument("-f", "--format", type=str, help="Transform using a specific predefined username format.")
     group.add_argument("-d", "--design", type=str, help="Design a custom username format to transform with. Format Examples: {first}x{last}, {f}-{last}")
 
-    parser.add_argument("-c", "--count",  type=int, help="How many characters to use from [First] or [Last] during transform.")
-    parser.add_argument("-t", "--trim",   default=None, const="last", nargs='?', choices=["first", "last"], help="Trim [First] or [Last] during transform.")
-    parser.add_argument("-n", "--names",  type=str, help="File containing names formatted as '[First] [Last]'.")
-    parser.add_argument("-s", "--single", type=str, help="Single name formatted as '[First] [Last]'.")
-    parser.add_argument("-o", "--output", type=str, help="Directory to write usernames to.")
+    parser.add_argument("-c", "--count",  type=int, help="Number of characters to keep when trimming during transform. Must be used with -t/--trim")
+    parser.add_argument("-t", "--trim",   type=str, help="Trim one of the following during transform: 'first', 'last', 'f', 'l'. Must be used with -c/--count")
+    parser.add_argument("-n", "--names",  type=str, help="File containing names formatted as 'First Last'.")
+    parser.add_argument("-s", "--single", type=str, help="Single name formatted as 'First Last'.")
+    parser.add_argument("-o", "--output", type=str, help="Directory to write username files to.")
 
     args = parser.parse_args()
 
@@ -166,27 +166,30 @@ if __name__ == '__main__':
         if (args.count and not args.trim) or (args.trim and not args.count):
             parser.error("-c/--count and -t/--trim must be used together or not at all.")
 
-        names = [n for n in open(args.names, "r").readlines()] if args.names else [args.single]
+        if args.trim.lower() not in ["first", "f", "last", "l"]:
+            parser.error("-t/--trim must be one of the following: 'first', 'last', 'f', 'l'")
+
+        names = [n.strip() for n in open(args.names, "r").readlines() if n.strip() not in ("", None)] if args.names else [args.single]
 
         # Transform given name(s) using all predefined transforms
         if args.all:
-            usernames = transform_predefined(names, count=args.count, trim=args.trim)
+            usernames = transform_predefined(names, count=args.count, trim=args.trim.lower())
             if not args.output:
                 print(usernames)
 
         # Transform given name(s) using a predefined transform
         elif args.format:
-            if args.format not in predefined.keys():
+            if args.format.lower() not in predefined.keys():
                 parser.error("Invalid format provided. Please refer to -l/--list.")
 
-            usernames = transform_predefined(names, format_=args.format, count=args.count, trim=args.trim)
+            usernames = transform_predefined(names, format_=args.format.lower(), count=args.count, trim=args.trim.lower())
             if not args.output:
                 print(usernames)
 
         # Transform given name(s) using a user designed transform
         elif args.design:
-            format_   = args.design.format(first="${first}", last="${last}", f="${f}", l="${l}")
-            usernames = transform_design(names, format_, count=args.count, trim=args.trim)
+            format_   = args.design.lower().format(first="${first}", last="${last}", f="${f}", l="${l}")
+            usernames = transform_design(names, format_, count=args.count, trim=args.trim.lower())
             if not args.output:
                 print(usernames)
 
