@@ -10,27 +10,33 @@ from string import Template
 
 
 # Predefined username formats
-f0 = Template("${first}.${last}")     # First.Last
-f1 = Template("${first}.${l}")        # First.L
-f2 = Template("${f}.${last}")         # F.Last
-f3 = Template("${first}_${last}")     # First_Last
-f4 = Template("${first}_${l}")        # First_L
-f5 = Template("${f}_${last}")         # F_Last
-f6 = Template("${f}${last}")          # FLast
-f7 = Template("${first}${l}")         # FirstL
-f8 = Template("${first}")             # First
+f0  = Template("${first}.${last}")     # First.Last
+f1  = Template("${first}.${l}")        # First.L
+f2  = Template("${f}.${last}")         # F.Last
+f3  = Template("${first}_${last}")     # First_Last
+f4  = Template("${first}_${l}")        # First_L
+f5  = Template("${f}_${last}")         # F_Last
+f6  = Template("${first}-${last}")     # First-Last
+f7  = Template("${first}-${l}")        # First-L
+f8  = Template("${f}-${last}")         # F-Last
+f9  = Template("${f}${last}")          # FLast
+f10 = Template("${first}${l}")         # FirstL
+f11 = Template("${first}")             # First
 
-l0 = Template("${last}.${first}")     # Last.First
-l1 = Template("${last}.${f}")         # Last.F
-l2 = Template("${l}.${first}")        # L.First
-l3 = Template("${last}_${first}")     # Last_First
-l4 = Template("${last}_${f}")         # Last_F
-l5 = Template("${l}_${first}")        # L_First
-l6 = Template("${last}${f}")          # LastF
-l7 = Template("${l}${first}")         # LFirst
-l8 = Template("${last}")              # Last
+l0  = Template("${last}.${first}")     # Last.First
+l1  = Template("${last}.${f}")         # Last.F
+l2  = Template("${l}.${first}")        # L.First
+l3  = Template("${last}_${first}")     # Last_First
+l4  = Template("${last}_${f}")         # Last_F
+l5  = Template("${l}_${first}")        # L_First
+l6  = Template("${last}-${first}")     # Last-First
+l7  = Template("${last}-${f}")         # Last-F
+l8  = Template("${l}-${first}")        # L-First
+l9  = Template("${last}${f}")          # LastF
+l10 = Template("${l}${first}")         # LFirst
+l11 = Template("${last}")              # Last
 
-t_list = [f0,f1,f2,f3,f4,f5,f6,f7,f8,l0,l1,l2,l3,l4,l5,l6,l7,l8]
+t_list = [f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,l0,l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11]
 
 
 # Clean template for key names
