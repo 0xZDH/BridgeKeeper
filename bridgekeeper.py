@@ -61,7 +61,7 @@ def trim_name(name, count, trim):
 def list_transforms():
     print("[ + ] List of transforms:")
     for transform in predefined.keys():
-        print("      > %s" % transform.replace('x', '_'))
+        print("      > %s" % transform)
 
 
 # Return an incrementing integer value to duplicate usernames
