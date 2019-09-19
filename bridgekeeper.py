@@ -87,7 +87,7 @@ def transform_predefined(names, format_=None, count=None, trim=None):
 
         for t in t_list:
             type_    = clean_template(t) # Transform template for key value
-            username = t.substitute(first=first, last=last, f=first[0], l=last[0], x='_')
+            username = t.substitute(first=first, last=last, f=first[0], l=last[0])
 
             if type_ in usernames.keys():
                 if not username in usernames[type_]:
@@ -108,7 +108,7 @@ def transform_design(list_, format_, count=None, trim=None):
         fullname = name.strip().split()
         (first, last) = trim_name(fullname, count, trim)
 
-        username = template.substitute(first=first, last=last, f=first[0], l=last[0], x='_')
+        username = template.substitute(first=first, last=last, f=first[0], l=last[0])
 
         if not username in usernames[type_]:
             usernames[type_].append(username)
