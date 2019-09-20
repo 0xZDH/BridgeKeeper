@@ -2,9 +2,6 @@
 
 """Transform names into different username formats."""
 
-import os
-import sys
-import errno
 import argparse
 from string import Template
 
