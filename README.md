@@ -39,5 +39,5 @@ Transform a name to a specified predefined username format:<br>
 Transform a name to a user designed username format:<br>
 `python bridgekeeper.py -s "John Adams Smith" -d {f}{m}-{last}`
 
-Trim usernames:<br>
+Trim usernames ([#] indicates the number of characters to use: John[2] -> Jo):<br>
 `python bridgekeeper.py -s "John Adams Smith" -d {first}[2]-{last}[4]`
