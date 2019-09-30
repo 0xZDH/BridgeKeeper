@@ -159,7 +159,7 @@ if __name__ == '__main__':
     group.add_argument("-l", "--list",    action="store_true", help="List all predefined username formats.")
     group.add_argument("-a", "--all",     action="store_true", help="Transform using all predefined username formats.")
     group.add_argument("-f", "--format",  type=str, help="Transform using a specific predefined username format.")
-    group.add_argument("-d", "--design",  type=str, help="Design a custom username format to transform with. Format Examples: {first}x{last}, {f}-{last}")
+    group.add_argument("-d", "--design",  type=str, help="Design a custom username format to transform with. Formats: {first}, {middle}, {last}, {f}, {m}, {l}")
     parser.add_argument("-F", "--file",   type=str, help="File containing names formatted as 'First Last'.")
     parser.add_argument("-s", "--single", type=str, help="Single name formatted as 'First Last'.")
     parser.add_argument("-o", "--output", type=str, help="Directory to write username files to.")

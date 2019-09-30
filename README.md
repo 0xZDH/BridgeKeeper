@@ -20,7 +20,7 @@ optional arguments:
                         Transform using a specific predefined username format.
   -d DESIGN, --design DESIGN
                         Design a custom username format to transform with.
-                        Format Examples: {first}x{last}, {f}-{last}
+                        Formats: {first}, {middle}, {last}, {f}, {m}, {l}
   -F FILE, --file FILE  File containing names formatted as 'First Last'.
   -s SINGLE, --single SINGLE
                         Single name formatted as 'First Last'.
