@@ -2,13 +2,13 @@
 
 <p align="center"><img src="https://media.giphy.com/media/e9aSISpSTtU4w/giphy.gif"></p>
 
-Transform names into different username formats.
+Transform names into various username formats.
 
 ### Usage
 
 ```
-usage: bridgekeeper.py [-h] (-l | -a | -f FORMAT | -d DESIGN) [-c COUNT]
-                       [-t TRIM] [-n NAMES] [-s SINGLE] [-o OUTPUT]
+usage: bridgekeeper.py [-h] (-l | -a | -f FORMAT | -d DESIGN) [-F FILE]
+                       [-s SINGLE] [-o OUTPUT]
 
 Name transformer.
 
@@ -21,13 +21,7 @@ optional arguments:
   -d DESIGN, --design DESIGN
                         Design a custom username format to transform with.
                         Format Examples: {first}x{last}, {f}-{last}
-  -c COUNT, --count COUNT
-                        Number of characters to keep when trimming during
-                        transform. Must be used with -t/--trim
-  -t TRIM, --trim TRIM  Trim one of the following during transform: 'first',
-                        'last', 'f', 'l'. Must be used with -c/--count
-  -n NAMES, --names NAMES
-                        File containing names formatted as 'First Last'.
+  -F FILE, --file FILE  File containing names formatted as 'First Last'.
   -s SINGLE, --single SINGLE
                         Single name formatted as 'First Last'.
   -o OUTPUT, --output OUTPUT
@@ -36,8 +30,14 @@ optional arguments:
 
 ### Examples
 
-`python bridgekeeper.py -s "John Smith" -a`
+Transform a name to all predefined username formats:<br>
+`python bridgekeeper.py -s "John Adams Smith" -a`
 
-`python bridgekeeper.py -s "John Smith" -f flast`
+Transform a name to a specified predefined username format:<br>
+`python bridgekeeper.py -s "John Adams Smith" -f flast`
 
-`python bridgekeeper.py -s "John Smith" -d {f}-{last}`
+Transform a name to a user designed username format:<br>
+`python bridgekeeper.py -s "John Adams Smith" -d {f}{m}-{last}`
+
+Trim usernames:<br>
+`python bridgekeeper.py -s "John Adams Smith" -d {first}[2]-{last}[4]`
