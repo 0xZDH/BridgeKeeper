@@ -31,13 +31,25 @@ optional arguments:
 ### Examples
 
 Transform a name to all predefined username formats:<br>
-`python bridgekeeper.py -s "John Adams Smith" -a`
+`$ python bridgekeeper.py -s "John Adams Smith" -a`
 
 Transform a name to a specified predefined username format:<br>
-`python bridgekeeper.py -s "John Adams Smith" -f flast`
+```
+$ python bridgekeeper.py -s "John Adams Smith" -f flast
+
+{'flast': ['JSmith']}
+```
 
 Transform a name to a user designed username format:<br>
-`python bridgekeeper.py -s "John Adams Smith" -d {f}{m}-{last}`
+```
+$ python bridgekeeper.py -s "John Adams Smith" -d {f}{m}-{last}
 
-Trim usernames ([#] indicates the number of characters to use: Smith[4] -> Smit):<br>
-`python bridgekeeper.py -s "John Adams Smith" -d {first}[2]-{last}[4]`
+{'fm-last': ['JA-Smith']}
+```
+
+Limit characters used in a user designed username format:<br>
+```
+$ python bridgekeeper.py -s "John Adams Smith" -d {first}[2]-{middle}-{last}[4]
+
+{'first[2]-middle-last[4]': ['Jo-Adams-Smit']}
+```
