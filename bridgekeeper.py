@@ -46,13 +46,13 @@ class Transform:
             self.predefined[t] = []
 
 
-    def duplicate(self, username, _list, count=1):
+    def __duplicate(self, username, _list, count=1):
         """ Handle duplicate usernames by appending an incrementing integer value """
         dup = "%s%d" % (username, (count + 1))
-        return self.duplicate(username, _list, count=(count + 1)) if dup in _list else dup
+        return self.__duplicate(username, _list, count=(count + 1)) if dup in _list else dup
 
 
-    def trim(self, f, m, l, template, delim='{'):
+    def __trim(self, f, m, l, template, delim='{'):
         """ Grab a predefined portion of a name """
         for item in [(delim + e) for e in template.split(delim) if e]:
             # Check if use specifies length
@@ -79,13 +79,13 @@ class Transform:
         m      = name[1] if len(name) > 2 else ""
 
         if re.search("\[[0-9]\]", template):
-            (f, m, l) = self.trim(f, m, l, template)
+            (f, m, l) = self.__trim(f, m, l, template)
 
         try:
             username = template.format(first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1])
             username = re.sub("\[[0-9]+\]", "", username)
             if _list and username in _list:
-                username = self.duplicate(username, _list)
+                username = self.__duplicate(username, _list)
 
         except KeyError as e:
             if self.debug: print("[DEBUG] %s" % e)
