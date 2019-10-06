@@ -65,4 +65,3 @@ $ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}[3]@example.com --low
 
 ### TODO
 * Potential: Add asyncio for handling large data sets quicker, but identify how to identify duplicates across concurrent runs.
-* Add support for multiple formats via -f/--format delimited by comma(s) (,).
