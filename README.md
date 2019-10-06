@@ -55,3 +55,10 @@ $ python bridgekeeper.py -n "John Adams Smith" -f {first}[2]-{middle}-{last}[4]
 
 {'{first}[2]-{middle}-{last}[4]': ['Jo-Adams-Smit']}
 ```
+
+Build an email format username with a specified @domain:
+```
+$ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}[3]@example.com --lower
+
+{'{f}{last}[3]@example.com': ['jsmi@example.com']}
+```
