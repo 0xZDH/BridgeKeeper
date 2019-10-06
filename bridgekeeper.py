@@ -55,8 +55,8 @@ class Transform:
     def __trim(self, f, m, l, template, delim='{'):
         """ Grab a predefined portion of a name """
         for item in [(delim + e) for e in template.split(delim) if e]:
-            # Check if use specifies length
-            if re.search("\[[0-9]+\]", item):
+            # Check if use specifies length > Look for '}[#]'
+            if re.search("}\[[0-9]+\]", item):
                 trim = int(re.search("\[([0-9]+)\]", item).group(1))
                 name = re.search("\{(.+)\}", item).group(1)
 
@@ -78,7 +78,7 @@ class Transform:
         (f, l) = (name[0], name[-1])
         m      = name[1] if len(name) > 2 else ""
 
-        if re.search("\[[0-9]\]", template):
+        if re.search("\[[0-9]+\]", template):
             (f, m, l) = self.__trim(f, m, l, template)
 
         try:
