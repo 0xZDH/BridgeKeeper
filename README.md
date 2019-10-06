@@ -42,14 +42,14 @@ $ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}
 
 Transform a name to a user designed username format:<br>
 ```
-$ python bridgekeeper.py -n "John Adams Smith" -d {f}{m}-{last}
+$ python bridgekeeper.py -n "John Adams Smith" -f {f}{m}-{last}
 
 {'{f}{m}-{last}': ['JA-Smith']}
 ```
 
 Limit characters used in a user designed username format:<br>
 ```
-$ python bridgekeeper.py -n "John Adams Smith" -d {first}[2]-{middle}-{last}[4]
+$ python bridgekeeper.py -n "John Adams Smith" -f {first}[2]-{middle}-{last}[4]
 
 {'{first}[2]-{middle}-{last}[4]': ['Jo-Adams-Smit']}
 ```
