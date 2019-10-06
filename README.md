@@ -32,17 +32,17 @@ optional arguments:
 
 ### Examples
 
-Transform a name to all predefined username formats:<br>
+Convert a name to all predefined username formats:<br>
 `$ python bridgekeeper.py -n "John Adams Smith" -a`
 
-Transform a name to a specified predefined username format:<br>
+Convert a name to a predefined username format:<br>
 ```
 $ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}
 
 {'{f}{last}': ['JSmith']}
 ```
 
-Transform a name to a user designed username format:<br>
+Convert a name to a user designed username format:<br>
 ```
 $ python bridgekeeper.py -n "John Adams Smith" -f {f}{m}-{last}
 
@@ -56,7 +56,7 @@ $ python bridgekeeper.py -n "John Adams Smith" -f {first}[2]-{middle}-{last}[4]
 {'{first}[2]-{middle}-{last}[4]': ['Jo-Adams-Smit']}
 ```
 
-Build an email format username with a specified @domain:
+Design an email format with a specified @domain:
 ```
 $ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}[3]@example.com --lower
 
