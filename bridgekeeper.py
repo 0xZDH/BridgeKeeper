@@ -40,8 +40,8 @@ class Transform:
                   "{l}{f}"]          # LF
 
 
-    def __init__(self, debug):
-        self.debug = debug
+    def __init__(self, debug=False):
+        self.__debug = debug
         for t in self.templates:
             self.predefined[t] = []
 
@@ -88,7 +88,7 @@ class Transform:
                 username = self.__duplicate(username, _list)
 
         except KeyError as e:
-            if self.debug: print("[DEBUG] %s" % e)
+            if self.__debug: print("[DEBUG] %s" % e)
             username = ""
 
         return username
