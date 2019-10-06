@@ -56,8 +56,8 @@ class Transform:
         """ Grab a predefined portion of a name """
         for item in [(delim + e) for e in template.split(delim) if e]:
             # Check if use specifies length > Look for '}[#]'
-            if re.search("}\[[0-9]+\]", item):
-                trim = int(re.search("\[([0-9]+)\]", item).group(1))
+            if re.search("}\[[-]?[0-9]+\]", item):
+                trim = int(re.search("\[([-]?[0-9]+)\]", item).group(1))
                 name = re.search("\{(.+)\}", item).group(1)
 
                 if name in ["first", "f"]:
@@ -78,12 +78,12 @@ class Transform:
         (f, l) = (name[0], name[-1])
         m      = name[1] if len(name) > 2 else ""
 
-        if re.search("\[[0-9]+\]", template):
+        if re.search("\[([-]?[0-9]+)\]", template):
             (f, m, l) = self.__trim(f, m, l, template)
 
         try:
             username = template.format(first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1])
-            username = re.sub("\[[0-9]+\]", "", username)
+            username = re.sub("\[([-]?[0-9]+)\]", "", username)
             if _list and username in _list:
                 username = self.__duplicate(username, _list)
 
