@@ -97,13 +97,15 @@ class Transform:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Convert name to username format.")
-    parser.add_argument("-l", "--list",   action="store_true", help="List all predefined username formats.")
+    parser.add_argument("-l", "--list",   action="store_true", help="List predefined username formats.")
     parser.add_argument("-a", "--all",    action="store_true", help="Convert using all predefined username formats.")
     parser.add_argument("-f", "--format", type=str, help="Specify predefined or custom username format. Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
     parser.add_argument("-F", "--file",   type=str, help="File containing names formatted as 'First Last'.")
     parser.add_argument("-n", "--name",   type=str, help="Single/List of names formatted as 'First Last' delimited by a comma (,).")
     parser.add_argument("-o", "--output", type=str, help="Directory to write username files to.")
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug output.")
+    parser.add_argument("--lower", action="store_true", help="Force usernames to all lower case.")
+    parser.add_argument("--upper", action="store_true", help="Force usernames to all upper case.")
 
     args = parser.parse_args()
 
@@ -113,7 +115,7 @@ if __name__ == '__main__':
 
     # List all predefined transforms
     if args.list:
-        print("[ + ] List of templates:")
+        print("[ + ] List of predefined templates:")
         for t in transform.templates:
             print("      > %s" % t)
 
@@ -127,6 +129,10 @@ if __name__ == '__main__':
             parser.error("-a/--all or -f/--format required with the selected options.")
 
         names = [n.strip() for n in open(args.file, "r").readlines() if n.strip() not in ("", None)] if args.file else args.name.split(',')
+
+        # Handle forced upper/lower case (default to lower)
+        if args.upper or args.lower:
+          names = [name.lower() for name in names] if args.lower else [name.upper() for name in names]
 
         if args.all:
             usernames = transform.predefined
