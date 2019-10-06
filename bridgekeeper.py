@@ -1,201 +1,158 @@
 #!/usr/bin/env python
 
 import re
+import sys
+import time
 import argparse
-from string import Template
 
-"""Transform names into various username formats."""
+"""Convert names into various username formats."""
 
 class Transform:
 
     # Predefined username formats
-    __transforms = {} # {Transform Name: Transform Template, ...}
-    __predefined = {} # {Transform Name: [Transformed Usernames], ...}
-    __templates  = [Template("${first}.${last}"),     # First.Last
-                    Template("${first}_${last}"),     # First_Last
-                    Template("${first}-${last}"),     # First-Last
-                    Template("${first}.${l}"),        # First.L
-                    Template("${first}_${l}"),        # First_L
-                    Template("${first}-${l}"),        # First-L
-                    Template("${f}.${last}"),         # F.Last
-                    Template("${f}_${last}"),         # F_Last
-                    Template("${f}-${last}"),         # F-Last
-                    Template("${f}${last}"),          # FLast
-                    Template("${first}${l}"),         # FirstL
-                    Template("${first}"),             # First
-                    Template("${f}${l}"),             # FL
+    predefined = {} # {Transform Name: [Transformed Username, ...]}
+    templates  = ["{first}.{last}",  # First.Last
+                  "{first}_{last}",  # First_Last
+                  "{first}-{last}",  # First-Last
+                  "{first}.{l}",     # First.L
+                  "{first}_{l}",     # First_L
+                  "{first}-{l}",     # First-L
+                  "{f}.{last}",      # F.Last
+                  "{f}_{last}",      # F_Last
+                  "{f}-{last}",      # F-Last
+                  "{f}{last}",       # FLast
+                  "{first}{l}",      # FirstL
+                  "{first}",         # First
+                  "{f}{l}",          # FL
 
-                    Template("${last}.${first}"),     # Last.First
-                    Template("${last}_${first}"),     # Last_First
-                    Template("${last}-${first}"),     # Last-First
-                    Template("${last}.${f}"),         # Last.F
-                    Template("${last}_${f}"),         # Last_F
-                    Template("${last}-${f}"),         # Last-F
-                    Template("${l}.${first}"),        # L.First
-                    Template("${l}_${first}"),        # L_First
-                    Template("${l}-${first}"),        # L-First
-                    Template("${l}${first}"),         # LFirst
-                    Template("${last}${f}"),          # LastF
-                    Template("${last}"),              # Last
-                    Template("${l}${f}")]             # LF
-
-
-    def __init__(self):
-        for t in self.__templates:
-            self.__transforms[self.__clean_template(t)] = t  # Dictionary to identify transforms for use
-            self.__predefined[self.__clean_template(t)] = [] # Dictionary as a temporary holding for predefined transforms
+                  "{last}.{first}",  # Last.First
+                  "{last}_{first}",  # Last_First
+                  "{last}-{first}",  # Last-First
+                  "{last}.{f}",      # Last.F
+                  "{last}_{f}",      # Last_F
+                  "{last}-{f}",      # Last-F
+                  "{l}.{first}",     # L.First
+                  "{l}_{first}",     # L_First
+                  "{l}-{first}",     # L-First
+                  "{l}{first}",      # LFirst
+                  "{last}{f}",       # LastF
+                  "{last}",          # Last
+                  "{l}{f}"]          # LF
 
 
-    # Clean templates for regular use
-    def __clean_template(self, template):
-        return template.safe_substitute().replace("$","").replace("{","").replace("}","")
+    def __init__(self, debug):
+        self.debug = debug
+        for t in self.templates:
+            self.predefined[t] = []
 
 
-    # Parse list of names into nested list of names i.e. [["First", "Middle", "Last"], [...]]
-    def __parse_names(self, _list):
-        return [[s for s in n.split()] for n in _list]
+    def duplicate(self, username, _list, count=1):
+        """ Handle duplicate usernames by appending an incrementing integer value """
+        dup = "%s%d" % (username, (count + 1))
+        return self.duplicate(username, _list, count=(count + 1)) if dup in _list else dup
 
 
-    # Append an incrementing integer value to duplicate usernames
-    def __duplicate(self, template, name, _list, count=1):
-        tmp = name + str(count + 1)
-        if tmp in _list[template]:
-            return __duplicate(template, name, _list, count=(c + 1))
-
-        else:
-            return tmp
-
-
-    # This is super janky and is temporary until I find a better method
-    # Trim a user defined portion of a username
-    def __trim(self, f, m, l, template):
-        temp = template.safe_substitute()
-
-        for item in temp.split('$'):
-            if re.search("\[[0-9]\]", item):
-                trim = int(re.search("\[[0-9]\]", item).group().strip('[').strip(']'))
-                name = re.search("\{(.*?)\}", item).group(1)
+    def trim(self, f, m, l, template, delim='{'):
+        """ Grab a predefined portion of a name """
+        for item in [(delim + e) for e in template.split(delim) if e]:
+            # Check if use specifies length
+            if re.search("\[[0-9]+\]", item):
+                trim = int(re.search("\[([0-9]+)\]", item).group(1))
+                name = re.search("\{(.+)\}", item).group(1)
 
                 if name in ["first", "f"]:
                     f = f[:trim]
 
-                elif name in ["last", "l"]:
-                    l = l[:trim]
-
                 elif name in ["middle", "m"]:
                     m = m[:trim]
+
+                elif name in ["last", "l"]:
+                    l = l[:trim]
 
         return (f, m, l)
 
 
-    # Transform names using: all templates, a specified predefined template, or a user defined template
-    def __transform(self, _list, template=None, design=None):
-        if not design:
-            t_list    = self.__transforms.values() if not template else [self.__transforms[template]]
-            usernames = self.__predefined if not template else {template: []}
+    def transform(self, name, template, _list=None):
+        """ Transform name using a template """
+        name   = name.strip().split()
+        (f, l) = (name[0], name[-1])
+        m      = name[1] if len(name) > 2 else ""
 
-        else:
-            t_list    = [Template(design)]
-            usernames = {self.__clean_template(t_list[0]): []}
+        if re.search("\[[0-9]\]", template):
+            (f, m, l) = self.trim(f, m, l, template)
 
-        for t in t_list:
-            type_ = self.__clean_template(t)
+        try:
+            username = template.format(first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1])
+            username = re.sub("\[[0-9]+\]", "", username)
+            if _list and username in _list:
+                username = self.duplicate(username, _list)
 
-            for n in _list:
-                (f, m, l) = (n[0], "", n[-1])
+        except KeyError as e:
+            if self.debug: print("[DEBUG] %s" % e)
+            username = ""
 
-                # Grab a middle name if there is one
-                if len(n) > 2:
-                    m = n[1]
-
-                # Handle user defined trimming
-                if design:
-                    if re.search("\[[0-9]\]", type_):
-                        (f, m, l) = self.__trim(f, m, l, t)
-
-                username = t.substitute(first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1]) # TODO: Add predefined middle name supported templates
-                username = re.sub("\[[0-9]\]", "", username)
-                usernames[type_].append(self.__duplicate(type_, username, usernames)) if username in usernames[type_] else usernames[type_].append(username)
-
-        return usernames
-
-
-    # Return list of predefined transforms
-    def get_transform_list(self):
-        return self.__transforms.keys()
-
-
-    # Write transformed usernames to approriate files
-    def write_file(self, output, _list):
-        for t in _list.keys():
-            with open("%s/%s.txt" % (output, t), 'w') as f:
-                for i in _list[t]:
-                    f.write("%s\n" % i)
-
-
-    # Call the proper transform method
-    def transform(self, _list, _all=False, _format=None, _design=None):
-        names = self.__parse_names(_list)
-
-        if _all:
-            return self.__transform(names)
-
-        elif _format:
-            if _format.lower() not in self.__transforms.keys():
-                print("Invalid predefined format provided. Please refer to the transform list.")
-                exit(1)
-
-            return self.__transform(names, template=_format.lower())
-
-        elif _design:
-            design = _design.lower().format(first="${first}", middle="${middle}", last="${last}", f="${f}", m="${m}", l="${l}")
-            return self.__transform(names, design=design)
+        return username
 
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Name transformer.")
-    group  = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-l", "--list",    action="store_true", help="List all predefined username formats.")
-    group.add_argument("-a", "--all",     action="store_true", help="Transform using all predefined username formats.")
-    group.add_argument("-f", "--format",  type=str, help="Transform using a specific predefined username format.")
-    group.add_argument("-d", "--design",  type=str, help="Design a custom username format to transform with. Formats: {first}, {middle}, {last}, {f}, {m}, {l}")
+    parser = argparse.ArgumentParser(description="Convert name to username format.")
+    parser.add_argument("-l", "--list",   action="store_true", help="List all predefined username formats.")
+    parser.add_argument("-a", "--all",    action="store_true", help="Convert using all predefined username formats.")
+    parser.add_argument("-f", "--format", type=str, help="Specify predefined or custom username format. Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
     parser.add_argument("-F", "--file",   type=str, help="File containing names formatted as 'First Last'.")
-    parser.add_argument("-s", "--single", type=str, help="Single name formatted as 'First Last'.")
+    parser.add_argument("-n", "--name",   type=str, help="Single/List of names formatted as 'First Last' delimited by a comma (,).")
     parser.add_argument("-o", "--output", type=str, help="Directory to write username files to.")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug output.")
 
     args = parser.parse_args()
 
-    # Intialize transform class object
-    transform = Transform()
+    start = time.time()
+
+    transform = Transform(args.debug)
 
     # List all predefined transforms
     if args.list:
-        print("[ + ] List of transforms:")
-        for t in transform.get_transform_list():
+        print("[ + ] List of templates:")
+        for t in transform.templates:
             print("      > %s" % t)
 
-    # Handle name tranforms
+    # Handle name tranformation
     else:
         # Handle parser errors
-        if not args.file and not args.single:
-            parser.error("-n/--names or -s/--single required with the selected options.")
+        if not args.file and not args.name:
+            parser.error("-F/--file or -n/--name required with the selected options.")
 
-        # Convert names file or single name to list
-        names = [n.strip() for n in open(args.file, "r").readlines() if n.strip() not in ("", None)] if args.file else [args.single]
+        if not args.all and not args.format:
+            parser.error("-a/--all or -f/--format required with the selected options.")
 
-        # Transform username based on user specified option
+        names = [n.strip() for n in open(args.file, "r").readlines() if n.strip() not in ("", None)] if args.file else args.name.split(',')
+
         if args.all:
-            usernames = transform.transform(names, _all=True)
+            usernames = transform.predefined
+            for template in transform.templates:
+                for name in names:
+                    usernames[template].append(transform.transform(name, template, usernames[template]))
 
-        elif args.format:
-            usernames = transform.transform(names, _format=args.format.lower())
+        else:
+            # Make sure there is no invalid format identifiers
+            if any(x[1:-1] not in ["first","middle","last",'f','m','l'] for x in re.findall(r'\{.+?\}', args.format)):
+                print("[!] Invalid format: %s" % (args.format))
+                print("[*] Valid formats identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
+                sys.exit(1)
 
-        elif args.design:
-            usernames = transform.transform(names, _design=args.design)
+            usernames = {args.format: []}
+            for name in names:
+                usernames[args.format].append(transform.transform(name, args.format, usernames[args.format]))
 
         if not args.output:
             print(usernames)
 
         else:
-            transform.write_file(args.output, usernames)
+            for template in usernames.keys():
+                with open("%s/%s.txt" % (output, t.replace('{','').replace('}','')), 'w') as f:
+                    for username in usernames[template]:
+                        f.write("%s\n" % username)
+
+    elapsed = time.time() - start
+    if args.debug: print("\n[DEBUG] %s executed in %0.4f seconds." % (__file__, elapsed))
