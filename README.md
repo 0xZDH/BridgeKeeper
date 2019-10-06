@@ -8,7 +8,7 @@ Convert names into various username formats.
 
 ```
 usage: bridgekeeper.py [-h] [-l] [-a] [-f FORMAT] [-F FILE] [-n NAME]
-                       [-o OUTPUT] [-d]
+                       [-o OUTPUT] [-d] [--lower] [--upper]
 
 Convert name to username format.
 
@@ -26,6 +26,8 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Directory to write username files to.
   -d, --debug           Enable debug output.
+  --lower               Force usernames to all lower case.
+  --upper               Force usernames to all upper case.
 ```
 
 ### Examples
