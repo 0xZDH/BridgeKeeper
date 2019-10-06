@@ -147,9 +147,10 @@ if __name__ == '__main__':
                 print("[*] Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
                 sys.exit(1)
 
-            usernames = {args.format: []}
-            for name in names:
-                usernames[args.format].append(transform.transform(name, args.format, usernames[args.format]))
+            usernames = {f.strip(): [] for f in args.format.split(',')}
+            for template in args.format.split(','):
+              for name in names:
+                  usernames[template.strip()].append(transform.transform(name, template.strip(), usernames[template.strip()]))
 
         if not args.output:
             print(usernames)
