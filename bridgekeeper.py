@@ -138,7 +138,7 @@ if __name__ == '__main__':
             # Make sure there is no invalid format identifiers
             if any(x[1:-1] not in ["first","middle","last",'f','m','l'] for x in re.findall(r'\{.+?\}', args.format)):
                 print("[!] Invalid format: %s" % (args.format))
-                print("[*] Valid formats identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
+                print("[*] Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
                 sys.exit(1)
 
             usernames = {args.format: []}
