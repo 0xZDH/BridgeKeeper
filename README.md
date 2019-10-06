@@ -62,3 +62,6 @@ $ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}[3]@example.com --low
 
 {'{f}{last}[3]@example.com': ['jsmi@example.com']}
 ```
+
+### TODO
+* Potential: Add asyncio for handling large data sets quicker, but identify how to identify duplicates across concurrent runs.
