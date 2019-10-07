@@ -10,40 +10,37 @@ import argparse
 class Transform:
 
     # Predefined username formats
-    predefined = {} # {Transform Name: [Transformed Username, ...]}
-    templates  = ["{first}.{last}",  # First.Last
-                  "{first}_{last}",  # First_Last
-                  "{first}-{last}",  # First-Last
-                  "{first}.{l}",     # First.L
-                  "{first}_{l}",     # First_L
-                  "{first}-{l}",     # First-L
-                  "{f}.{last}",      # F.Last
-                  "{f}_{last}",      # F_Last
-                  "{f}-{last}",      # F-Last
-                  "{f}{last}",       # FLast
-                  "{first}{l}",      # FirstL
-                  "{first}",         # First
-                  "{f}{l}",          # FL
+    templates = ["{first}.{last}",  # First.Last
+                 "{first}_{last}",  # First_Last
+                 "{first}-{last}",  # First-Last
+                 "{first}.{l}",     # First.L
+                 "{first}_{l}",     # First_L
+                 "{first}-{l}",     # First-L
+                 "{f}.{last}",      # F.Last
+                 "{f}_{last}",      # F_Last
+                 "{f}-{last}",      # F-Last
+                 "{f}{last}",       # FLast
+                 "{first}{l}",      # FirstL
+                 "{first}",         # First
+                 "{f}{l}",          # FL
 
-                  "{last}.{first}",  # Last.First
-                  "{last}_{first}",  # Last_First
-                  "{last}-{first}",  # Last-First
-                  "{last}.{f}",      # Last.F
-                  "{last}_{f}",      # Last_F
-                  "{last}-{f}",      # Last-F
-                  "{l}.{first}",     # L.First
-                  "{l}_{first}",     # L_First
-                  "{l}-{first}",     # L-First
-                  "{l}{first}",      # LFirst
-                  "{last}{f}",       # LastF
-                  "{last}",          # Last
-                  "{l}{f}"]          # LF
+                 "{last}.{first}",  # Last.First
+                 "{last}_{first}",  # Last_First
+                 "{last}-{first}",  # Last-First
+                 "{last}.{f}",      # Last.F
+                 "{last}_{f}",      # Last_F
+                 "{last}-{f}",      # Last-F
+                 "{l}.{first}",     # L.First
+                 "{l}_{first}",     # L_First
+                 "{l}-{first}",     # L-First
+                 "{l}{first}",      # LFirst
+                 "{last}{f}",       # LastF
+                 "{last}",          # Last
+                 "{l}{f}"]          # LF
 
 
     def __init__(self, debug=False):
         self.__debug = debug
-        for t in self.templates:
-            self.predefined[t] = []
 
 
     def __duplicate(self, username, _list, count=1):
