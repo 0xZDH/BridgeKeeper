@@ -103,14 +103,12 @@ if __name__ == '__main__':
     parser.add_argument("-F", "--file",   type=str, help="File containing names formatted as 'First Last'.")
     parser.add_argument("-n", "--name",   type=str, help="Single/List of names formatted as 'First Last' delimited by a comma (,).")
     parser.add_argument("-o", "--output", type=str, help="Directory to write username files to.")
-    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug output.")
+    parser.add_argument("-d", "--debug",  action="store_true", help="Enable debug output.")
     parser.add_argument("--lower", action="store_true", help="Force usernames to all lower case.")
     parser.add_argument("--upper", action="store_true", help="Force usernames to all upper case.")
 
-    args = parser.parse_args()
-
-    start = time.time()
-
+    args      = parser.parse_args()
+    start     = time.time()
     transform = Transform(args.debug)
 
     # List all predefined transforms
@@ -123,7 +121,7 @@ if __name__ == '__main__':
     else:
         # Handle parser errors
         if not args.file and not args.name:
-            parser.error("-F/--file or -n/--name required with the selected options.")
+            parser.error("-F/--file or -n/--name required.")
 
         if not args.all and not args.format:
             parser.error("-a/--all or -f/--format required with the selected options.")
@@ -134,23 +132,16 @@ if __name__ == '__main__':
         if args.upper or args.lower:
           names = [name.lower() for name in names] if args.lower else [name.upper() for name in names]
 
-        if args.all:
-            usernames = transform.predefined
-            for template in transform.templates:
+        usernames = {f.strip(): [] for f in (transform.templates if args.all else args.format.split(','))}
+
+        for template in usernames.keys():
+            if any(t[1:-1] not in ["first","middle","last",'f','m','l'] for t in re.findall(r'\{.+?\}', template)):
+                print("[!] Invalid username format: %s" % (template))
+                usernames.pop(template, None) # Remove invalid template
+
+            else:
                 for name in names:
                     usernames[template].append(transform.transform(name, template, usernames[template]))
-
-        else:
-            # Make sure there is no invalid format identifiers
-            if any(x[1:-1] not in ["first","middle","last",'f','m','l'] for x in re.findall(r'\{.+?\}', args.format)):
-                print("[!] Invalid format: %s" % (args.format))
-                print("[*] Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}")
-                sys.exit(1)
-
-            usernames = {f.strip(): [] for f in args.format.split(',')}
-            for template in args.format.split(','):
-              for name in names:
-                  usernames[template.strip()].append(transform.transform(name, template.strip(), usernames[template.strip()]))
 
         if not args.output:
             print(usernames)
