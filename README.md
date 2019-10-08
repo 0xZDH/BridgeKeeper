@@ -56,8 +56,8 @@ Name: John Adams Smith
 ### Features
 
 * Support for all three major search engines: Google, Bing, and Yahoo
-* Elaborate name parsing to strip LinkedIn titles, certs, prefixes, etc.
-* Elaborate username formatting for trickier client username formats
+* Name parsing to strip LinkedIn titles, certs, prefixes, etc.
+* Username formatting with support for trickier username formats
   * i.e. If a username format has only the first 4 characters of the last name
 * Search engine blacklist evasion
 * Proxying
