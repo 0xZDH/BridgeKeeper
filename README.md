@@ -2,63 +2,73 @@
 
 <p align="center"><img src="https://media.giphy.com/media/e9aSISpSTtU4w/giphy.gif"></p>
 
-Convert names into various username formats.
+Scrape employee names from search engine LinkedIn profiles. Convert employee names to a specified username format.
 
 ### Usage
 
 ```
-usage: bridgekeeper.py [-h] [-l] [-a] [-f FORMAT] [-F FILE] [-n NAME]
-                       [-o OUTPUT] [-d] [--lower] [--upper]
+usage: bridgekeeper.py [-h] (-c COMPANY | -F FILE) [-f FORMAT] [-d DEPTH]
+                       [-t TIMEOUT] [-o OUTPUT] [--proxy PROXY] [--lower]
+                       [--upper] [--debug]
 
-Convert name to username format.
+Gather LinkedIn names from Google/Bing/Yahoo and convert to username format.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -l, --list            List all predefined username formats.
-  -a, --all             Convert using all predefined username formats.
+  -c COMPANY, --company COMPANY
+                        Target company to search for LinkedIn profiles.
+  -F FILE, --file FILE  File containing names to be converted to usernames.
+                        Name format: 'First Last'
   -f FORMAT, --format FORMAT
-                        Specify predefined or custom username format. Valid
-                        format identifiers: {first}, {middle}, {last}, {f},
-                        {m}, {l}
-  -F FILE, --file FILE  File containing names formatted as 'First Last'.
-  -n NAME, --name NAME  Single/List of names formatted as 'First Last'
-                        delimited by a comma (,).
+                        Specify username format. Valid format identifiers:
+                        {first}, {middle}, {last}, {f}, {m}, {l}, [#] (For
+                        trimming names)
+  -d DEPTH, --depth DEPTH
+                        Number of pages to search each search engine. Default:
+                        5
+  -t TIMEOUT, --timeout TIMEOUT
+                        Specify request timeout. Default: 25
   -o OUTPUT, --output OUTPUT
                         Directory to write username files to.
-  -d, --debug           Enable debug output.
+  --proxy PROXY         Proxy to pass traffic through: <ip:port>
   --lower               Force usernames to all lower case.
   --upper               Force usernames to all upper case.
+  --debug               Enable debug output.
 ```
 
 ### Examples
 
-Convert a name to all predefined username formats:<br>
-`$ python bridgekeeper.py -n "John Adams Smith" -a`
+Gather employee names for a company, Example, and convert each name into an 'flast' username formatted email:<br>
+`$ python3 bridgekeeper.py --company example --format {f}{last}@example.com --depth 10 --proxy 127.0.0.1:8080 --output example-employees/ --debug`
 
-Convert a name to a predefined username format:<br>
+Convert an already generated list of names to usernames:<br>
+`$ python3 bridgekeeper.py --file names.txt --format {f}{last}@example.com --output example-employees/ --debug`
+
+
+Username format examples (BridgeKeeper supports middle names as well as character limited usernamers - e.g. only 4 characters of a last name is used):<br>
 ```
-$ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}
-
-{'{f}{last}': ['JSmith']}
-```
-
-Convert a name to a user designed username format:<br>
-```
-$ python bridgekeeper.py -n "John Adams Smith" -f {f}{m}-{last}
-
-{'{f}{m}-{last}': ['JA-Smith']}
+Name: John Adams Smith
+{f}{last}                   > jsmith
+{f}{m}.{last}               > ja.smith
+{f}{last}[4]@example.com    > jsmit@example.com
 ```
 
-Limit characters used in a user designed username format:<br>
-```
-$ python bridgekeeper.py -n "John Adams Smith" -f {first}[2]-{middle}-{last}[4]
+### Features
 
-{'{first}[2]-{middle}-{last}[4]': ['Jo-Adams-Smit']}
-```
+* Support for all three major search engines: Google, Bing, and Yahoo
+* Elaborate name parsing to strip LinkedIn titles, certs, prefixes, etc.
+* Elaborate username formatting for trickier client username formats
+  * i.e. If a username format has only the first 4 characters of the last name
+* Search engine blacklist evasion
+* Proxying
+* Hyphenated last name handling
+* Duplicate username handling
+  * Incrementing numbers appended to duplicate usernames
 
-Design an email format with a specified @domain:
-```
-$ python bridgekeeper.py -n "John Adams Smith" -f {f}{last}[3]@example.com --lower
+### TODO
 
-{'{f}{last}[3]@example.com': ['jsmi@example.com']}
-```
+* Add flag to call Pymeta/Pymeta clone
+
+### Acknowledgements
+
+**m8r0wn** - [CrossLinked](https://github.com/m8r0wn/CrossLinked)
