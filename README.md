@@ -45,7 +45,7 @@ Convert an already generated list of names to usernames:<br>
 `$ python3 bridgekeeper.py --file names.txt --format {f}{last}@example.com --output example-employees/ --debug`
 
 
-Username format examples (BridgeKeeper supports middle names as well as character limited usernamers - e.g. only 4 characters of a last name is used):<br>
+Username format examples (BridgeKeeper supports middle names as well as character limited usernames - e.g. only 4 characters of a last name is used):<br>
 ```
 Name: John Adams Smith
 {f}{last}                   > jsmith
