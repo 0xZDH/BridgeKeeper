@@ -66,10 +66,6 @@ Name: John Adams Smith
   * Duplicate username handling
     * Incrementing numbers appended to duplicate usernames
 
-### TODO
-
-* Add flag to call Pymeta/Pymeta clone
-
 ### Acknowledgements
 
 **m8r0wn** - [CrossLinked](https://github.com/m8r0wn/CrossLinked)
