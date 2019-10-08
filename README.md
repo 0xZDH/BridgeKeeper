@@ -57,13 +57,13 @@ Name: John Adams Smith
 
 * Support for all three major search engines: Google, Bing, and Yahoo
 * Name parsing to strip LinkedIn titles, certs, prefixes, etc.
-* Username formatting with support for trickier username formats
-  * i.e. If a username format has only the first 4 characters of the last name
 * Search engine blacklist evasion
 * Proxying
-* Hyphenated last name handling
-* Duplicate username handling
-  * Incrementing numbers appended to duplicate usernames
+* Username formatting with support for trickier username formats
+  * i.e. If a username format has only the first 4 characters of the last name
+  * Hyphenated last name handling
+  * Duplicate username handling
+    * Incrementing numbers appended to duplicate usernames
 
 ### TODO
 
