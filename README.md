@@ -60,7 +60,8 @@ Name: John Adams Smith
 * Search engine blacklist evasion
 * Proxying
 * Username formatting with support for trickier username formats
-  * i.e. If a username format has only the first 4 characters of the last name
+  * Name trimming
+    * i.e. If a username format has only the first 4 characters of the last name
   * Hyphenated last name handling
   * Duplicate username handling
     * Incrementing numbers appended to duplicate usernames
