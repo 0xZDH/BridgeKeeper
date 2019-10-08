@@ -11,7 +11,7 @@ usage: bridgekeeper.py [-h] (-c COMPANY | -F FILE) [-f FORMAT] [-d DEPTH]
                        [-t TIMEOUT] [-o OUTPUT] [--proxy PROXY] [--lower]
                        [--upper] [--debug]
 
-Gather LinkedIn names from Google/Bing/Yahoo and convert to username format.
+Scrape employee names from search engine LinkedIn profiles. Convert employee names to a specified username format.
 
 optional arguments:
   -h, --help            show this help message and exit

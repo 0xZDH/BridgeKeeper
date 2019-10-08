@@ -8,7 +8,7 @@ from core.transformer import Transformer
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Gather LinkedIn names from Google/Bing/Yahoo. Convert names to username format.")
+    parser = argparse.ArgumentParser(description="Scrape employee names from search engine LinkedIn profiles. Convert employee names to a specified username format.")
 
     # Allow a user to scrape names or just convert an already generated list of names
     group = parser.add_mutually_exclusive_group(required=True)
