@@ -72,6 +72,7 @@ class Scraper:
             data = re.sub(r, '', data)
         data = re.sub("\.", " ", data)
         data = re.sub("\s+", " ", data)
+        data = re.sub("'", "", data) # Remove ' in names like O'Connell
         return data.strip()
 
     def http_req(self, se):
