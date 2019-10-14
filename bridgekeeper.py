@@ -19,6 +19,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--depth",   type=int, help="Number of pages to search each search engine. Default: 5", default=5)
     parser.add_argument("-t", "--timeout", type=int, help="Specify request timeout. Default: 25", default=25)
     parser.add_argument("-o", "--output",  type=str, help="Directory to write username files to.")
+    parser.add_argument("--cookie",        type=str, help="File containing Google CAPTCHA bypass cookies")
     parser.add_argument("--proxy",         type=str, help="Proxy to pass traffic through: <ip:port>")
     parser.add_argument("--lower",         action="store_true", help="Force usernames to all lower case.")
     parser.add_argument("--upper",         action="store_true", help="Force usernames to all upper case.")
@@ -30,7 +31,7 @@ if __name__ == '__main__':
     output = args.output if args.output else "./"
 
     if args.company:
-        scraper = Scraper(args.company, depth=args.depth, timeout=args.timeout, proxy=args.proxy)
+        scraper = Scraper(args.company, cookies=args.cookie, depth=args.depth, timeout=args.timeout, proxy=args.proxy)
         scraper.loop.run_until_complete(scraper.run())
         print("\n[+] Names Found: %d" % len(scraper.employees))
         print("[*] Writing names to the following directory: %s" % output)

@@ -29,10 +29,11 @@ class Scraper:
         "Upgrade-Insecure-Requests": "1"
     }
 
-    def __init__(self, company, depth=5, timeout=25, proxy=None):
+    def __init__(self, company, cookies=None, depth=5, timeout=25, proxy=None):
         self.company = company
         self.depth   = depth
         self.timeout = timeout
+        self.cookies = None if not cookies else self.set_cookie(cookies)
         self.proxy   = None if not proxy else {
             "http": proxy, "https": proxy
         }
@@ -57,6 +58,17 @@ class Scraper:
             }
         }
 
+    def set_cookie(self, cookie_file):
+        cookies  = {}
+        _cookies = [x.strip() for x in open(cookie_file).readlines()]
+        for _cook in _cookies:
+            for cookie in _cook.split(';'):
+              cookie = cookie.strip()
+              name,value = cookie.split('=', 1)
+              cookies[name] = value
+
+        return cookies
+
     def __get_google(self, data):
         return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
 
@@ -77,9 +89,10 @@ class Scraper:
 
     def http_req(self, se):
         print('[*] Gathering names from %s (depth=%d)' % (se.title(), self.depth))
-        names = []
+        names   = []
+        cookies = None if se != "google" else self.cookies
         for index in range(self.depth):
-            resp   = requests.get(self.data[se]["url"].format(COMPANY=self.company, INDEX=(self.data[se]["idx"](index))), headers=self.headers, timeout=self.timeout, proxies=self.proxy, verify=False)
+            resp   = requests.get(self.data[se]["url"].format(COMPANY=self.company, INDEX=(self.data[se]["idx"](index))), headers=self.headers, timeout=self.timeout, proxies=self.proxy, verify=False, cookies=cookies)
             if 'solving the above CAPTCHA' not in resp.text:
                 soup   = BeautifulSoup(resp.text, "lxml")
                 search = self.data[se]["html"]
@@ -99,6 +112,7 @@ class Scraper:
 
             else:
                 print("[!] CAPTCHA triggered for %s, stopping scrape..." % se)
+                print("[*] Try completing the CAPTCHA in a browser and then providing the Google cookies via --cookie")
                 break
 
         return names
