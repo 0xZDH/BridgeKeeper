@@ -45,7 +45,7 @@ class Scraper:
             },
             "google": {
                 "url":  'https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&start={INDEX}',
-                "html": ["div", "class", "BNeawe vvjwJb AP7Wnd"],
+                "html": ["h3", "class", "LC20lb"],
                 "idx":  lambda x: x * 10,
                 "get":  self.__get_google
             },
@@ -80,16 +80,26 @@ class Scraper:
         names = []
         for index in range(self.depth):
             resp   = requests.get(self.data[se]["url"].format(COMPANY=self.company, INDEX=(self.data[se]["idx"](index))), headers=self.headers, timeout=self.timeout, proxies=self.proxy, verify=False)
-            soup   = BeautifulSoup(resp.text, "lxml")
-            search = self.data[se]["html"]
+            if 'solving the above CAPTCHA' not in resp.text:
+                soup   = BeautifulSoup(resp.text, "lxml")
+                search = self.data[se]["html"]
 
-            for person in soup.findAll(search[0], {search[1]: search[2]}):
-                name = self.data[se]["get"](person)
-                names.append(self.__remove(name))
+                if soup.findAll(search[0], {search[1]: search[2]}):
+                    for person in soup.findAll(search[0], {search[1]: search[2]}):
+                        name = self.data[se]["get"](person)
+                        names.append(self.__remove(name))
 
-            # Search engine blacklist evasion technique
-            # Sleep for random times between a half second and a full second
-            time.sleep(round(random.uniform(0.5, 1.5), 2))
+                else:
+                    # Assume we hit the final page
+                    break
+
+                # Search engine blacklist evasion technique
+                # Sleep for random times between a half second and a full second
+                time.sleep(round(random.uniform(1.0, 2.0), 2))
+
+            else:
+                print("[!] CAPTCHA triggered for %s, stopping scrape..." % se)
+                break
 
         return names
 

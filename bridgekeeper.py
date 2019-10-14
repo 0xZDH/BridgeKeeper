@@ -27,10 +27,16 @@ if __name__ == '__main__':
 
     start = time.time()
 
+    output = args.output if args.output else "./"
+
     if args.company:
         scraper = Scraper(args.company, depth=args.depth, timeout=args.timeout, proxy=args.proxy)
         scraper.loop.run_until_complete(scraper.run())
         print("\n[+] Names Found: %d" % len(scraper.employees))
+        print("[*] Writing names to the following directory: %s" % output)
+        with open("%s/names.txt" % (output), 'a') as f:
+            for name in scraper.employees:
+                f.write("%s\n" % name)
 
     if args.format:
         print("[*] Converting found names to: %s" % args.format)
@@ -47,28 +53,27 @@ if __name__ == '__main__':
                     names = [name.lower() for name in names] if args.lower else [name.upper() for name in names]
 
                 for name in names:
-                    usernames[template].append(transform.transform(name, template, usernames[template]))
-                    # Handle hyphenated last names
-                    if '-' in name:
-                        name = name.split()
-                        nm   = ' '.join(n for n in name[:-1])
-                        for ln in name[-1].split('-'):
-                            _nm = "%s %s" % (nm, ln)
-                            usernames[template].append(transform.transform(_nm, template, usernames[template]))
+                    try:
+                        usernames[template].append(transform.transform(name, template, usernames[template]))
+                        # Handle hyphenated last names
+                        if '-' in name:
+                            name = name.split()
+                            nm   = ' '.join(n for n in name[:-1])
+                            for ln in name[-1].split('-'):
+                                _nm = "%s %s" % (nm, ln)
+                                usernames[template].append(transform.transform(_nm, template, usernames[template]))
 
-    output = args.output if args.output else "./"
-    if args.debug: print("[DEBUG] Writing names and usernames to files in the following directory: %s" % output)
-
-    if args.company:
-        with open("%s/names.txt" % (output), 'a') as f:
-            for name in scraper.employees:
-                f.write("%s\n" % name)
+                    except IndexError as e:
+                        print("[!] Name Error: %s" % name)
+                        pass
 
     if args.format:
-        for template in usernames.keys():
-            with open("%s/%s.txt" % (output, template.replace('{','').replace('}','')), 'w') as f:
-                for username in usernames[template]:
-                        f.write("%s\n" % username)
+        if any(len(usernames[t]) > 0 for t in usernames.keys()):
+            print("[*] Writing usernames to the following directory: %s" % output)
+            for template in usernames.keys():
+                with open("%s/%s.txt" % (output, template.replace('{','').replace('}','')), 'w') as f:
+                    for username in usernames[template]:
+                            f.write("%s\n" % username)
 
 
     elapsed = time.time() - start
