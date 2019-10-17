@@ -8,10 +8,11 @@ Scrape employee names from search engine LinkedIn profiles. Convert employee nam
 
 ```
 usage: bridgekeeper.py [-h] (-c COMPANY | -F FILE) [-f FORMAT] [-d DEPTH]
-                       [-t TIMEOUT] [-o OUTPUT] [--proxy PROXY] [--lower]
-                       [--upper] [--debug]
+                       [-t TIMEOUT] [-o OUTPUT] [--cookie COOKIE]
+                       [--proxy PROXY] [--lower] [--upper] [--debug]
 
-Scrape employee names from search engine LinkedIn profiles. Convert employee names to a specified username format.
+Scrape employee names from search engine LinkedIn profiles. Convert employee
+names to a specified username format.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -30,6 +31,7 @@ optional arguments:
                         Specify request timeout. Default: 25
   -o OUTPUT, --output OUTPUT
                         Directory to write username files to.
+  --cookie COOKIE       File containing Google CAPTCHA bypass cookies
   --proxy PROXY         Proxy to pass traffic through: <ip:port>
   --lower               Force usernames to all lower case.
   --upper               Force usernames to all upper case.

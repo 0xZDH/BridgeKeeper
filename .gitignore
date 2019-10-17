@@ -1,6 +1,8 @@
 .DS_Store
+*.txt
 *.pyc
 __pycache__/
 core/.DS_Store
+core/*.txt
 core/*.pyc
 core/__pycache__/

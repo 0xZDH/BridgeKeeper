@@ -33,7 +33,7 @@ class Scraper:
         self.company = company
         self.depth   = depth
         self.timeout = timeout
-        self.cookies = None if not cookies else self.set_cookie(cookies)
+        self.cookies = None if not cookies else self.__set_cookie(cookies)
         self.proxy   = None if not proxy else {
             "http": proxy, "https": proxy
         }
@@ -41,24 +41,25 @@ class Scraper:
             "bing": {
                 "url":  'https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&first={INDEX}',
                 "html": ["li", "class", "b_algo"],
-                "idx":  lambda x: x * 14,
-                "get":  self.__get_bing
+                "idx":  lambda x: x * 14
             },
             "google": {
                 "url":  'https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&start={INDEX}',
                 "html": ["h3", "class", "LC20lb"],
-                "idx":  lambda x: x * 10,
-                "get":  self.__get_google
+                "idx":  lambda x: x * 10
             },
             "yahoo": {
                 "url":  'https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&b={INDEX}',
                 "html": ["a", "class", "ac-algo fz-l ac-21th lh-24"],
-                "idx":  lambda x: (x * 10) + 1,
-                "get":  self.__get_yahoo
+                "idx":  lambda x: (x * 10) + 1
             }
         }
 
-    def set_cookie(self, cookie_file):
+        # Keep track of current depth of each search engine
+        self.cur_d = {'google': 0, 'yahoo': 0, 'bing': 0}
+        self.tot_d = self.depth * 3
+
+    def __set_cookie(self, cookie_file):
         cookies  = {}
         _cookies = [x.strip() for x in open(cookie_file).readlines()]
         for _cook in _cookies:
@@ -69,22 +70,22 @@ class Scraper:
 
         return cookies
 
-    def __get_google(self, data):
-        return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
+    def __print_status(self):
+        cur = sum(self.cur_d[k] for k in self.cur_d.keys())
+        print('[*] Progress: {0:.0f}%'.format((cur / self.tot_d) * 100.0), end='\r')
 
-    def __get_yahoo(self, data):
-        return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
+    def __get_name(self, data, se):
+        if se == 'bing':
+            return re.sub(' (-|–|\xe2\x80\x93).*', '', data.findAll('a')[0].getText()) # re.search('((?<=>)[A-Z].+?) - ', str(data)).group(1)
 
-    def __get_bing(self, data):
-        return re.sub(' (-|–|\xe2\x80\x93).*', '', data.findAll('a')[0].getText()) # re.search('((?<=>)[A-Z].+?) - ', str(data)).group(1)
+        return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
 
     def __remove(self, data):
         # Remove Prefixes/Titles/Certs in names and clean
-        for r in [",.*", "\(.+?\)[ ]?", "(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)[ ]?", "I[IV][I]?[ ]?"]:
+        for r in [",.*", "\(.+?\)", "(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)", "I[IV][I]?", "'", "(Jr\.|Sr\.)"]:
             data = re.sub(r, '', data)
         data = re.sub("\.", " ", data)
         data = re.sub("\s+", " ", data)
-        data = re.sub("'", "", data) # Remove ' in names like O'Connell
         return data.strip()
 
     def http_req(self, se):
@@ -94,12 +95,15 @@ class Scraper:
         for index in range(self.depth):
             resp   = requests.get(self.data[se]["url"].format(COMPANY=self.company, INDEX=(self.data[se]["idx"](index))), headers=self.headers, timeout=self.timeout, proxies=self.proxy, verify=False, cookies=cookies)
             if 'solving the above CAPTCHA' not in resp.text:
+                self.cur_d[se] += 1
+                self.__print_status()
+
                 soup   = BeautifulSoup(resp.text, "lxml")
                 search = self.data[se]["html"]
 
                 if soup.findAll(search[0], {search[1]: search[2]}):
                     for person in soup.findAll(search[0], {search[1]: search[2]}):
-                        name = self.data[se]["get"](person)
+                        name = self.__get_name(person, se)
                         names.append(self.__remove(name))
 
                 else:
@@ -111,6 +115,7 @@ class Scraper:
                 time.sleep(round(random.uniform(1.0, 2.0), 2))
 
             else:
+                self.cur_d[se] = self.depth
                 print("[!] CAPTCHA triggered for %s, stopping scrape..." % se)
                 print("[*] Try completing the CAPTCHA in a browser and then providing the Google cookies via --cookie")
                 break
@@ -126,8 +131,8 @@ class Scraper:
         print("[*] Starting %d coroutines to throttle requests to each search engine." % (len(self.data)))
         futures = [
             self.loop.run_in_executor(
-                None, self.http_req, url
-            ) for url in self.data.keys()
+                None, self.http_req, se
+            ) for se in self.data.keys()
         ]
 
         for data in asyncio.as_completed(futures):

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     if args.company:
         scraper = Scraper(args.company, cookies=args.cookie, depth=args.depth, timeout=args.timeout, proxy=args.proxy)
         scraper.loop.run_until_complete(scraper.run())
-        print("\n[+] Names Found: %d" % len(scraper.employees))
+        print("\n\n[+] Names Found: %d" % len(scraper.employees))
         print("[*] Writing names to the following directory: %s" % output)
         with open("%s/names.txt" % (output), 'a') as f:
             for name in scraper.employees:
