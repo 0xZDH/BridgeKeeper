@@ -3,6 +3,7 @@
 import re
 import time
 import argparse
+from core.hunter import Hunter
 from core.scraper import Scraper
 from core.transformer import Transformer
 
@@ -12,10 +13,12 @@ if __name__ == '__main__':
 
     # Allow a user to scrape names or just convert an already generated list of names
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-c", "--company", type=str, help="Target company to search for LinkedIn profiles.")
+    group.add_argument("-c", "--company", type=str, help="Target company to search for LinkedIn profiles (e.g. 'Example Ltd.').")
     group.add_argument("-F", "--file",    type=str, help="File containing names to be converted to usernames. Name format: 'First Last'")
 
     parser.add_argument("-f", "--format",  type=str, help="Specify username format. Valid format identifiers: {first}, {middle}, {last}, {f}, {m}, {l}, [#] (For trimming names)")
+    parser.add_argument("-D", "--domain",  type=str, help="Domain name of target company for Hunter.io email format identification and email scraping.")
+    parser.add_argument("-a", "--api",     type=str, help="Hunter.io API key.")
     parser.add_argument("-d", "--depth",   type=int, help="Number of pages to search each search engine. Default: 5", default=5)
     parser.add_argument("-t", "--timeout", type=int, help="Specify request timeout. Default: 25", default=25)
     parser.add_argument("-o", "--output",  type=str, help="Directory to write username files to.")
@@ -26,8 +29,7 @@ if __name__ == '__main__':
     parser.add_argument("--debug",         action="store_true", help="Enable debug output.")
     args = parser.parse_args()
 
-    start = time.time()
-
+    start  = time.time()
     output = args.output if args.output else "./"
 
     if args.company:
@@ -39,10 +41,23 @@ if __name__ == '__main__':
             for name in scraper.employees:
                 f.write("%s\n" % name)
 
-    if args.format:
-        print("[*] Converting found names to: %s" % args.format)
+    # Only get format from Hunter.io if API key and domain are set
+    if args.api and args.domain:
+        hunter = Hunter(args.domain, api_key=args.api, timeout=args.timeout, proxy=args.proxy)
+        if not args.format:
+            _format = hunter.hunt_format()
+            print("[*] Using Hunter.io username format")
+
+        else:
+            _format = args.format
+
+    else:
+        _format = args.format if args.format else None
+
+    if _format:
+        print("[*] Converting found names to: %s" % _format)
         transform = Transformer(args.debug)
-        usernames = {f.strip(): [] for f in args.format.split(',')}
+        usernames = {f.strip(): set() for f in _format.split(',')}
         for template in usernames.keys():
             if any(t[1:-1] not in ["first","middle","last",'f','m','l'] for t in re.findall(r'\{.+?\}', template)):
                 print("[!] Invalid username format: %s" % (template))
@@ -55,20 +70,30 @@ if __name__ == '__main__':
 
                 for name in names:
                     try:
-                        usernames[template].append(transform.transform(name, template, usernames[template]))
+                        usernames[template].add(transform.transform(name, template, usernames[template]))
                         # Handle hyphenated last names
                         if '-' in name:
                             name = name.split()
                             nm   = ' '.join(n for n in name[:-1])
                             for ln in name[-1].split('-'):
                                 _nm = "%s %s" % (nm, ln)
-                                usernames[template].append(transform.transform(_nm, template, usernames[template]))
+                                usernames[template].add(transform.transform(_nm, template, usernames[template]))
 
                     except IndexError as e:
                         print("[!] Name Error: %s" % name)
                         pass
 
-    if args.format:
+        # Gather emails from Hunter.io
+        # We only need to account for a single format here since we are using Hunter.io's format
+        if args.api and args.domain:
+            hunter.hunt_emails()
+            print("[+] Hunter.io identified %d emails." % len(hunter.emails))
+            for email in hunter.emails:
+                usernames[_format].add(email)
+
+    print("[+] Number of unique usernames gathered: %d" % sum(len(usernames[t]) for t in usernames.keys()))
+
+    if _format:
         if any(len(usernames[t]) > 0 for t in usernames.keys()):
             print("[*] Writing usernames to the following directory: %s" % output)
             for template in usernames.keys():

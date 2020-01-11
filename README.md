@@ -7,9 +7,10 @@ Scrape employee names from search engine LinkedIn profiles. Convert employee nam
 ### Usage
 
 ```
-usage: bridgekeeper.py [-h] (-c COMPANY | -F FILE) [-f FORMAT] [-d DEPTH]
-                       [-t TIMEOUT] [-o OUTPUT] [--cookie COOKIE]
-                       [--proxy PROXY] [--lower] [--upper] [--debug]
+usage: bridgekeeper.py [-h] (-c COMPANY | -F FILE) [-f FORMAT] [-D DOMAIN]
+                       [-a API] [-d DEPTH] [-t TIMEOUT] [-o OUTPUT]
+                       [--cookie COOKIE] [--proxy PROXY] [--lower] [--upper]
+                       [--debug]
 
 Scrape employee names from search engine LinkedIn profiles. Convert employee
 names to a specified username format.
@@ -17,13 +18,18 @@ names to a specified username format.
 optional arguments:
   -h, --help            show this help message and exit
   -c COMPANY, --company COMPANY
-                        Target company to search for LinkedIn profiles.
+                        Target company to search for LinkedIn profiles (e.g.
+                        'Example Ltd.').
   -F FILE, --file FILE  File containing names to be converted to usernames.
                         Name format: 'First Last'
   -f FORMAT, --format FORMAT
                         Specify username format. Valid format identifiers:
                         {first}, {middle}, {last}, {f}, {m}, {l}, [#] (For
                         trimming names)
+  -D DOMAIN, --domain DOMAIN
+                        Domain name of target company for Hunter.io email
+                        format identification and email scraping.
+  -a API, --api API     Hunter.io API key.
   -d DEPTH, --depth DEPTH
                         Number of pages to search each search engine. Default:
                         5
@@ -41,7 +47,10 @@ optional arguments:
 ### Examples
 
 Gather employee names for a company, Example, and convert each name into an 'flast' username formatted email:<br>
-`$ python3 bridgekeeper.py --company example --format {f}{last}@example.com --depth 10 --proxy 127.0.0.1:8080 --output example-employees/ --debug`
+`$ python3 bridgekeeper.py --company "Example Ltd." --format {f}{last}@example.com --depth 10 --output example-employees/ --debug`
+
+Gather employee names and email addresses from search engines and Hunter.io:<br>
+`$ python3 bridgekeeper.py --company "Example Ltd." --domain example.com --api {API_KEY} --depth 10 --output example-employees/ --debug`
 
 Convert an already generated list of names to usernames:<br>
 `$ python3 bridgekeeper.py --file names.txt --format {f}{last}@example.com --output example-employees/ --debug`
@@ -57,16 +66,21 @@ Name: John Adams Smith
 
 ### Features
 
-* Support for all three major search engines: Google, Bing, and Yahoo
+* Support for three major search engines: Google, Bing, and Yahoo
 * Name parsing to strip LinkedIn titles, certs, prefixes, etc.
 * Search engine blacklist evasion
 * Proxying
 * Username formatting with support for trickier username formats
   * Name trimming
-    * i.e. If a username format has only the first 4 characters of the last name
+    * e.g. If a username format has only the first 4 characters of the last name
   * Hyphenated last name handling
   * Duplicate username handling
     * Incrementing numbers appended to duplicate usernames
+* Use Hunter.io to identify the email format for a specified domain and pull down any known emails for that domain
+
+### Contributions
+
+[aslarchergore](https://github.com/aslarchergore) - Gather format and emails from Hunter.io
 
 ### Acknowledgements
 
