@@ -85,4 +85,4 @@ Name: John Adams Smith
 ### Acknowledgements
 
 **m8r0wn** - [CrossLinked](https://github.com/m8r0wn/CrossLinked)<br>
-**initstring** - [linkedin2username]https://github.com/initstring/linkedin2username
+**initstring** - [linkedin2username](https://github.com/initstring/linkedin2username)
