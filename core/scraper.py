@@ -80,12 +80,30 @@ class Scraper:
 
         return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
 
-    def __remove(self, data):
+    def __clean(self, data):
+        # From: https://github.com/initstring/linkedin2username/blob/master/linkedin2username.py
+        accents = {
+            'a':  u"[àáâãäå]",
+            'e':  u"[èéêë]",
+            'i':  u"[ìíîï]",
+            'o':  u"[òóôõö]",
+            'u':  u"[ùúûü]",
+            'y':  u"[ýÿ]",
+            'n':  u"[ñ]",
+            'ss': u"[ß]"
+        }
+        for k,v in accents.items():
+            data = re.sub(u"%s" % v, k, data)
+
         # Remove Prefixes/Titles/Certs in names and clean
         for r in [",.*", "\(.+?\)", "(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)", "I[IV][I]?", "'", "(Jr\.|Sr\.)"]:
             data = re.sub(r, '', data)
-        data = re.sub("\.", " ", data)
-        data = re.sub("\s+", " ", data)
+        data = re.sub("\.", ' ', data)
+        data = re.sub("\s+", ' ', data)
+
+        chr_map = re.compile("[^a-zA-Z -]")
+        data    = chr_map.sub('', data)
+
         return data.strip()
 
     def http_req(self, se):
@@ -104,7 +122,7 @@ class Scraper:
                 if soup.findAll(search[0], {search[1]: search[2]}):
                     for person in soup.findAll(search[0], {search[1]: search[2]}):
                         name = self.__get_name(person, se)
-                        names.append(self.__remove(name))
+                        names.append(self.__clean(name))
 
                 else:
                     # Assume we hit the final page

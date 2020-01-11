@@ -78,10 +78,11 @@ Name: John Adams Smith
     * Incrementing numbers appended to duplicate usernames
 * Use Hunter.io to identify the email format for a specified domain and pull down any known emails for that domain
 
-### Contributions
+### Contributers
 
 [aslarchergore](https://github.com/aslarchergore) - Gather format and emails from Hunter.io
 
 ### Acknowledgements
 
-**m8r0wn** - [CrossLinked](https://github.com/m8r0wn/CrossLinked)
+**m8r0wn** - [CrossLinked](https://github.com/m8r0wn/CrossLinked)<br>
+**initstring** - [linkedin2username]https://github.com/initstring/linkedin2username
