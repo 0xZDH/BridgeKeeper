@@ -1,5 +1,3 @@
-# Requirements
-
-requests>=2.22.0
-beautifulsoup4>=4.8.0
 lxml
+beautifulsoup4>=4.8.0
+requests>=2.22.0

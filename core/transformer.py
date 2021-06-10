@@ -1,61 +1,127 @@
 #!/usr/bin/env python3
 
 import re
-import sys
-import time
-import argparse
-
-"""Convert names into various username formats."""
-
-class Transformer:
-
-    def __init__(self, debug=False):
-        self.__debug = debug
+import logging
+from typing import List, Tuple
 
 
-    def __duplicate(self, username, _list, count=1):
-        """ Handle duplicate usernames by appending an incrementing integer value """
-        dup = "%s%d" % (username, (count + 1))
-        return self.__duplicate(username, _list, count=(count + 1)) if dup in _list else dup
+class Transformer(object):
+    """Convert names into various username formats."""
 
+    def __duplicate(
+        self,
+        username: str,
+        list_: List[str],
+        count: int = 1,
+    ) -> str:
+        """Handle duplicate usernames by appending an incrementing
+        integer value.
 
-    def __trim(self, f, m, l, template, delim='{'):
-        """ Grab a predefined portion of a name """
+        Arguments:
+            username: username to check against list for duplicates
+            list_: list of current usernames to check against
+            count: current duplicate count
+
+        Returns:
+            username with duplicate count appended
+        """
+        dup = f"{username}{(count)}"
+        return (
+            self.__duplicate(username, list_, count=(count + 1))
+            if dup in list_
+            else dup
+        )
+
+    def __trim(
+        self,
+        f: str,
+        m: str,
+        l: str,
+        template: str,
+        delim: str = "{",
+    ) -> Tuple[str, str, str]:
+        """Trim a predefined portion of a name by based on a
+        username template.
+
+        Arguments:
+            f: first name string
+            m: middle name string
+            l: last name string
+            template: username format template
+            delim: format delimeter
+
+        Returns:
+            trimmed f/m/l names based on format template
+        """
+        # Loop over each formatter in username template (i.e. {f}, {m}, etc.)
+        # We split on the defined delimeter and then reconstruct the formatters
+        # by adding the delimeter back
         for item in [(delim + e) for e in template.split(delim) if e]:
-            # Check if use specifies length > Look for '}[#]'
+            # Check if the user specified a length for the current formatter
+            # Look for: `}[#]`
             if re.search("}\[[-]?[0-9]+\]", item):
+                # Grab the trim number: int within [...]
                 trim = int(re.search("\[([-]?[0-9]+)\]", item).group(1))
-                name = re.search("\{(.+)\}", item).group(1)
 
-                if name in ["first", "f"]:
+                # Grab the formatter to be trimmed: string within {...}
+                fmt = re.search("\{(.+)\}", item).group(1)
+
+                # Trim the data accordingly
+                if fmt in ["first", "f"]:
                     f = f[:trim]
 
-                elif name in ["middle", "m"]:
+                elif fmt in ["middle", "m"]:
                     m = m[:trim]
 
-                elif name in ["last", "l"]:
+                elif fmt in ["last", "l"]:
                     l = l[:trim]
 
         return (f, m, l)
 
+    def transform(
+        self,
+        name: str,
+        template: str,
+        list_: List[str] = None,
+    ) -> str:
+        """Transform name using a given username format template.
 
-    def transform(self, name, template, _list=None):
-        """ Transform name using a template """
-        name   = name.strip().split()
+        Arguments:
+            name: name for transform
+            template: username format template
+            list_: list of current transformed names
+
+        Returns:
+            transformed name
+
+        Excepts:
+            KeyError: if f/m/l can't be accessed, return an empty
+              username string
+        """
+        # Split the name into section (f/m/l)
+        name = name.strip().split()
         (f, l) = (name[0], name[-1])
-        m      = name[1] if len(name) > 2 else ""
+        m = name[1] if len(name) > 2 else ""
 
+        # Check if the format specifies to trim a given section
+        # of the name
         if re.search("\[[-]?[0-9]+\]", template):
             (f, m, l) = self.__trim(f, m, l, template)
 
         try:
-            username = template.format(first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1])
+            username = template.format(
+                first=f, middle=m, last=l, f=f[:1], m=m[:1], l=l[:1]
+            )
+            # Remove trim identifier from username
             username = re.sub("\[[-]?[0-9]+\]", "", username)
-            if _list and username in _list:
-                username = self.__duplicate(username, _list)
+
+            # Check and handle duplicates by appending a duplicate
+            # counter
+            if list_ and username in list_:
+                username = self.__duplicate(username, list_)
 
         except KeyError as e:
-            if self.__debug: print("[DEBUG] %s" % e)
+            logging.debug(f"{e}")
             username = ""
 
         return username

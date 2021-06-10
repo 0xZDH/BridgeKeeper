@@ -1,8 +1,13 @@
-.DS_Store
-*.txt
+# Ignore all compiled Python code
 *.pyc
-__pycache__/
-core/.DS_Store
-core/*.txt
-core/*.pyc
-core/__pycache__/
+# Ignore all text files
+*.txt
+# Ignore all OS X .DS_Store files
+**/.DS_Store
+# Ignore all directories with compiled Python data
+**/__pycache__
+# Ignore custom directories
+venv/
+output/
+# Negate requirements text file to include on commits
+!requirements.txt
