@@ -123,7 +123,7 @@ def scrape(
     timeout: int = 25,
     proxy: str = None,
     cookie: str = None,
-) -> Scraper:  # type: ignore
+) -> Scraper:
     """Scrape Google, Bing, and Yahoo for LinkedIn profiles by
     invoking the Scraper module. Write found names to a file
     in a designated output directory.
@@ -139,7 +139,7 @@ def scrape(
     Returns:
         (scraper, output file)
     """
-    scraper = Scraper(  # type: ignore
+    scraper = Scraper(
         company,
         depth=depth,
         timeout=timeout,
@@ -182,7 +182,7 @@ def hunt(
     Returns:
         (username format, hunter)
     """
-    hunter = Hunter(  # type: ignore
+    hunter = Hunter(
         domain,
         api_key=api_key,
         timeout=timeout,
@@ -202,7 +202,7 @@ def hunt(
 def transform_names(
     format_: str,
     names: List[str],
-) -> Dict[str, set]:  # type: ignore
+) -> Dict[str, set]:
     """Convert a list of names to provided username format(s).
 
     Arguments:
@@ -212,7 +212,7 @@ def transform_names(
     Returns:
         dictionary of username templates -> list of converted usernames
     """
-    transform = Transformer()  # type: ignore
+    transform = Transformer()
 
     # Create a username template map: format -> empty set
     usernames = {f.strip(): set() for f in format_.split(",")}
