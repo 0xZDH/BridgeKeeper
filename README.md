@@ -92,7 +92,7 @@ Name: John Adams Smith
 
 ## Contributers
 
-[nullg0re](https://github.com/nullg0re) - Code to gather username format and emails via Hunter.io
+[nullg0re](https://github.com/nullg0re) - Code to gather username format and emails via Hunter.io<br>
 [nromsdahl](https://github.com/nromsdahl)
 
 ### Acknowledgements
