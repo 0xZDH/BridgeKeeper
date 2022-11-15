@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
-import re
 import logging
-from typing import List, Tuple
+import re
+from typing import (
+    List,
+    Tuple,
+)
 
 
 class Transformer(object):
