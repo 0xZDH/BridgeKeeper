@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import logging
-from typing import List
+from typing import (
+    Dict,
+    List,
+)
 
 from bridgekeeper.core.scrape.scraper import Scraper
 from bridgekeeper.utils.defaults import START_SCRIPT
@@ -13,13 +16,14 @@ def scrape(
     depth: int = 5,
     timeout: float = 25,
     proxy: str = None,
-    bing_cookies: str = None,
-    google_cookies: str = None,
-    yahoo_cookies: str = None,
+    bing_cookies: Dict[str, str] = None,
+    duckduckgo_cookies: Dict[str, str] = None,
+    google_cookies: Dict[str, str] = None,
+    yahoo_cookies: Dict[str, str] = None,
 ) -> List[str]:
-    """Scrape Google, Bing, and Yahoo for LinkedIn profiles by
-    invoking the Scraper module. Write found names to a file
-    in a designated output directory.
+    """Scrape Bing, DuckDuckGo, Google, and Yahoo for LinkedIn profiles
+    by invoking the Scraper module. Write found names to a file in a
+    designated output directory.
 
     Arguments:
         company: name of company to scrape (i.e. 'Example Ltd.')
@@ -27,9 +31,7 @@ def scrape(
         depth: number of pages deep to scrape per search engine
         timeout: request timeout (HTTP)
         proxy: request proxy (HTTP)
-        bing_cookies: bing cookies
-        google_cookies: google cookies
-        yahoo_cookies: yahoo cookies
+        *_cookies: search engine cookies
 
     Returns:
         list of names
@@ -40,6 +42,7 @@ def scrape(
         timeout=timeout,
         proxy=proxy,
         bing_cookies=bing_cookies,
+        duckduckgo_cookies=duckduckgo_cookies,
         google_cookies=google_cookies,
         yahoo_cookies=yahoo_cookies,
     )

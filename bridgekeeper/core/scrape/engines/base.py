@@ -127,21 +127,17 @@ class ScraperEngine:
 
         return data.strip()
 
-    def _http_req(self, index: int) -> List[str]:
+    def _http_req(self, url: str) -> List[str]:
         """Send an HTTP request to a given search engine to scrape
         for LinkedIn profiles based on a company name.
 
         Arguments:
-            index: depth index
+            url: url to request
 
         Returns:
             list of names found
         """
         try:
-            # URL should always be prepped with an empty index param
-            # at the end
-            url = self.url + str(index)
-
             response = self.session.get(
                 url,
                 headers=HTTP_HEADERS,

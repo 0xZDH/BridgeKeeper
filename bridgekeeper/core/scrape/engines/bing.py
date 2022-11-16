@@ -41,7 +41,11 @@ class BingEngine(ScraperEngine):
 
         names = []
         for index in range(self.depth):
-            response = self._http_req(index * 14)
+            # Update current index
+            i = index * 14
+            url_ = self.url + str(i)
+
+            response = self._http_req(url_)
 
             if not response:
                 break

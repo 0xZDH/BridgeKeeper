@@ -32,7 +32,11 @@ class GoogleEngine(ScraperEngine):
 
         names = []
         for index in range(self.depth):
-            response = self._http_req(index * 10)
+            # Update current index
+            i = index * 10
+            url_ = self.url + str(i)
+
+            response = self._http_req(url_)
 
             if not response:
                 break

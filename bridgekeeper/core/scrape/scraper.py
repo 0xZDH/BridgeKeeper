@@ -2,9 +2,11 @@
 
 import asyncio
 import logging
+from typing import Dict
 
 from bridgekeeper.core.scrape.engines import (
     BingEngine,
+    DuckDuckGoEngine,
     GoogleEngine,
     YahooEngine,
 )
@@ -19,9 +21,10 @@ class Scraper:
         depth: int = 5,
         timeout: float = 25,
         proxy: str = None,
-        bing_cookies: str = None,
-        google_cookies: str = None,
-        yahoo_cookies: str = None,
+        bing_cookies: Dict[str, str] = None,
+        duckduckgo_cookies: Dict[str, str] = None,
+        google_cookies: Dict[str, str] = None,
+        yahoo_cookies: Dict[str, str] = None,
     ):
         """Initialize Scraper instance.
 
@@ -30,9 +33,7 @@ class Scraper:
             depth: depth of pages to go for each search engine
             timeout: request timeout (HTTP)
             proxy: request proxy (HTTP)
-            bing_cookies: bing cookies
-            google_cookies: google cookies
-            yahoo_cookies: yahoo cookies
+            *_cookies: search engine cookies
         """
         self.loop = asyncio.get_event_loop()
         self.employees = set()
@@ -42,8 +43,9 @@ class Scraper:
         self.timeout = timeout
         self.proxy = proxy
 
-        # FireProx proxy URLs
+        # Search engine cookies
         self.bing_cookies = bing_cookies
+        self.duckduckgo_cookies = duckduckgo_cookies
         self.google_cookies = google_cookies
         self.yahoo_cookies = yahoo_cookies
 
@@ -68,12 +70,14 @@ class Scraper:
         }
 
         futures = []
-        engines = [BingEngine, GoogleEngine, YahooEngine]
+        engines = [BingEngine, DuckDuckGoEngine, GoogleEngine, YahooEngine]
 
         for engine in engines:
-            # Setup FireProx proxying
+            # Apply custom search engine cookies
             if engine == BingEngine:
                 runner_args["cookies"] = self.bing_cookies
+            elif engine == DuckDuckGoEngine:
+                runner_args["cookies"] = self.duckduckgo_cookies
             elif engine == GoogleEngine:
                 runner_args["cookies"] = self.google_cookies
             elif engine == YahooEngine:

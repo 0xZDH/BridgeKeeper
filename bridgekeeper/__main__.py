@@ -103,6 +103,11 @@ def parse_args() -> argparse.Namespace:
         help="string or cookie file for Bing search engine",
     )
     search_args.add_argument(
+        "--duckduckgo-cookies",
+        type=str,
+        help="string or cookie file for DuckDuckGo search engine",
+    )
+    search_args.add_argument(
         "--google-cookies",
         type=str,
         help="string or cookie file for Google search engine",
@@ -194,6 +199,15 @@ def update_args(args: argparse.Namespace) -> argparse.Namespace:
             logging.debug(f"Bing cookie file not found, assuming comma delimited list")
             args.bing_cookies = cookie_str_to_dict(args.bing_cookies)
 
+    if args.duckduckgo_cookies:
+        if check_file(args.duckduckgo_cookies):
+            logging.debug(f"Loading DuckDuckGo cookies from: {args.duckduckgo_cookies}")
+            args.duckduckgo_cookies = cookie_file_to_dict(args.duckduckgo_cookies)
+
+        else:
+            logging.debug(f"DuckDuckGo cookie file not found, assuming comma delimited list")  # fmt: skip
+            args.duckduckgo_cookies = cookie_str_to_dict(args.duckduckgo_cookies)
+
     if args.google_cookies:
         if check_file(args.google_cookies):
             logging.debug(f"Loading Google cookies from: {args.google_cookies}")
@@ -244,6 +258,7 @@ def main():
             timeout=args.timeout,
             proxy=args.proxy,
             bing_cookies=args.bing_cookies,
+            duckduckgo_cookies=args.duckduckgo_cookies,
             google_cookies=args.google_cookies,
             yahoo_cookies=args.yahoo_cookies,
         )
