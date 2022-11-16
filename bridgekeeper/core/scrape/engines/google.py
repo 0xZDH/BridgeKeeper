@@ -16,12 +16,14 @@ class GoogleEngine(ScraperEngine):
         """Initialize Google Scraper instance"""
         super().__init__(*args, **kwargs)
 
-        self.url = f"https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&start="
+        # Init engine
         self.engine = "Google"
         self.progress[self.engine] = 0
+        self.url = f"https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&start="
 
     def run(self) -> List[str]:
-        """Scrape LinkedIn profiles based on a company name
+        """Scrape Google search engine for LinkedIn profiles based
+        on a company name
 
         Returns:
             list of names found
@@ -63,8 +65,13 @@ class GoogleEngine(ScraperEngine):
                 time.sleep(round(random.uniform(1.0, 2.0), 2))
 
             else:
-                self.progress[self.engine] = self.depth
-                logging.error(f"CAPTCHA triggered for {self.engine}, halting scraping")
+                logging.error(f"CAPTCHA triggered for {self.engine}, ending coroutine")
+
+                # Adjust progress bar accordingly
+                if self.progress[self.engine] < self.depth:
+                    self.progress[self.engine] = self.depth
+                    self._print_status()
+
                 break
 
         return names

@@ -16,7 +16,12 @@ class BingEngine(ScraperEngine):
         """Initialize Bing Scraper instance"""
         super().__init__(*args, **kwargs)
 
-        # Force required Bing cookie
+        # Init engine
+        self.engine = "Bing"
+        self.progress[self.engine] = 0
+        self.url = f"https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&first="
+
+        # Force required Bing cookie if not already set
         cookie = {"SRCHHPGUSR": "NRSLT=10"}
         if self.cookies:
             if "SRCHHPGUSR" not in self.cookies:
@@ -25,12 +30,9 @@ class BingEngine(ScraperEngine):
         else:
             self.session.cookies.update(cookie)
 
-        self.url = f"https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&first="
-        self.engine = "Bing"
-        self.progress[self.engine] = 0
-
     def run(self) -> List[str]:
-        """Scrape LinkedIn profiles based on a company name
+        """Scrape Bing search engine for LinkedIn profiles based
+        on a company name
 
         Returns:
             list of names found
@@ -72,8 +74,13 @@ class BingEngine(ScraperEngine):
                 time.sleep(round(random.uniform(1.0, 2.0), 2))
 
             else:
-                self.progress[self.engine] = self.depth
-                logging.error(f"CAPTCHA triggered for {self.engine}, halting scraping")
+                logging.error(f"CAPTCHA triggered for {self.engine}, ending coroutine")
+
+                # Adjust progress bar accordingly
+                if self.progress[self.engine] < self.depth:
+                    self.progress[self.engine] = self.depth
+                    self._print_status()
+
                 break
 
         return names
