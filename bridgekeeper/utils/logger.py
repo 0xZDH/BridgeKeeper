@@ -30,14 +30,7 @@ def init_logger(debug: bool):
         logging_level = logging.INFO
         logging_format = "[%(asctime)s] %(levelname)-5s | %(message)s"
 
-    # Looks like basicConfig isn't working how we want it to, so
-    # we need to force the current logger level and formatting
-    logging.getLogger().setLevel(logging_level)
-    logging.getLogger().handlers[0].setFormatter(logging.Formatter(logging_format))
-
-    # 'force' is only supported in Python 3.8+, so to be backwards
-    # compatible, we force it using the above method
-    # logging.basicConfig(format=logging_format, level=logging_level, force=True)
+    logging.basicConfig(format=logging_format, level=logging_level)
 
     # Update log level names with colorized output
     logging.addLevelName(logging.CRITICAL, LoggingLevels.CRITICAL)  # 50

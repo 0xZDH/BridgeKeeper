@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import Dict
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 
 
 def check_file(f: str) -> bool:
@@ -65,3 +69,18 @@ def cookie_str_to_dict(cookie: str) -> Dict[str, str]:
                 pass
 
     return cookies
+
+
+def file_to_list(f: str) -> List[Any]:
+    """Read a file's lines into a list.
+
+    Arguments:
+        f: file to read into a list
+
+    Returns:
+        list of file lines
+    """
+    with open(f, "r") as f:
+        list_ = [l.strip() for l in f if l.strip() not in [None, ""]]
+
+    return list_

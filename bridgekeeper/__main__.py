@@ -19,6 +19,7 @@ from bridgekeeper.utils.helper import (
     check_file,
     cookie_file_to_dict,
     cookie_str_to_dict,
+    file_to_list,
 )
 from bridgekeeper.utils.logger import init_logger
 
@@ -163,11 +164,22 @@ def parse_args() -> argparse.Namespace:
     if args.api and not args.domain:
         parser.error("both of the arguments -a/--api and -d/--domain are required for Hunter.io")  # fmt: skip
 
-    # Validate provided files
+    return args
+
+
+def update_args(args: argparse.Namespace) -> argparse.Namespace:
+    """Update command line arguments based on user input
+
+    Arguments:
+        args: argument namespace
+
+    Returns:
+        updates argument namespace
+    """
     if args.names:
         if check_file(args.names):
             logging.debug(f"Loading names from: {args.names}")
-            args.names = cookie_file_to_dict(args.names)
+            args.names = file_to_list(args.names)
 
         else:
             logging.debug(f"Names file not found, assuming comma delimited list")
@@ -210,6 +222,7 @@ def main():
     init_logger(args.debug)
 
     print(__banner__)
+    args = update_args(args)
 
     # Track execution time
     start = time.time()
