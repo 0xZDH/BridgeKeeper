@@ -23,8 +23,9 @@ Target(s):
                         target company to search for LinkedIn profiles
                         (e.g. 'Example Ltd.')
 
-  -F FILE, --file FILE  file containing names to be converted to usernames
-                        (format: 'First (M) Last')
+  -n NAMES, --names NAMES
+                        string (comma delimited) or file containing names
+                        to be converted to usernames (format: 'First (M) Last')
 
 Username Formatting:
   -f FORMAT, --format FORMAT
