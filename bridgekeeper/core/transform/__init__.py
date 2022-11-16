@@ -45,6 +45,11 @@ def transform(
             logging.debug(f"Formatting names: '{template}'")
 
             for name in names:
+                # Account for blank names
+                name = name.strip()
+                if not name:
+                    continue
+
                 try:
                     # Pass in the name and format template to perform name
                     # transformation. Pass in the current list of transformed

@@ -174,7 +174,7 @@ def update_args(args: argparse.Namespace) -> argparse.Namespace:
         args: argument namespace
 
     Returns:
-        updates argument namespace
+        updated argument namespace
     """
     if args.names:
         if check_file(args.names):
