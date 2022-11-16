@@ -80,7 +80,7 @@ Gather employee names and email addresses from search engines and Hunter.io:<br>
 `bridgekeeper.py --company "Example, Ltd." --domain example.com --api {API_KEY} --depth 10 --output example-employees`
 
 Convert an already generated list of names to usernames:<br>
-`bridgekeeper.py --file names.txt --format {f}{last}@example.com --output example-employees`
+`bridgekeeper.py --names names.txt --format {f}{last}@example.com --output example-employees`
 
 Username format examples (BridgeKeeper supports middle names as well as character limited usernames - e.g. only 4 characters of a last name is used):<br>
 ```
