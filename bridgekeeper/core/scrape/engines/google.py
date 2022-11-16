@@ -16,9 +16,7 @@ class GoogleEngine(ScraperEngine):
         """Initialize Google Scraper instance"""
         super().__init__(*args, **kwargs)
 
-        base_url = "https://www.google.com" if not self.proxy_url else self.proxy_url
-        self.url = f"{base_url}/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&start="
-
+        self.url = f"https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&start="
         self.engine = "Google"
         self.progress[self.engine] = 0
 

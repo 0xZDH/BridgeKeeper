@@ -16,9 +16,7 @@ class YahooEngine(ScraperEngine):
         """Initialize Yahoo Scraper instance"""
         super().__init__(*args, **kwargs)
 
-        base_url = "https://search.yahoo.com" if not self.proxy_url else self.proxy_url
-        self.url = f"{base_url}/search?p=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&b="  # fmt: skip
-
+        self.url = f"https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&b="
         self.engine = "Yahoo"
         self.progress[self.engine] = 0
 

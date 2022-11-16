@@ -25,9 +25,7 @@ class BingEngine(ScraperEngine):
         else:
             self.session.cookies.update(cookie)
 
-        base_url = "https://www.bing.com" if not self.proxy_url else self.proxy_url
-        self.url = f"{base_url}/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&first="
-
+        self.url = f"https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&first="
         self.engine = "Bing"
         self.progress[self.engine] = 0
 

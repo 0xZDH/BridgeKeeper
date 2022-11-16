@@ -28,7 +28,6 @@ class ScraperEngine:
         timeout: float = 25,
         proxy: str = None,
         cookies: Dict[str, str] = None,
-        proxy_url: str = None,
     ):
         """Initialize Scraper engine base.
 
@@ -38,7 +37,6 @@ class ScraperEngine:
             timeout: request timeout (HTTP)
             proxy: request proxy (HTTP)
             cookies: session cookies
-            proxy_url: fireprox proxy url
         """
         # Inherited data sets
         self.company = company
@@ -46,7 +44,6 @@ class ScraperEngine:
         self.timeout = timeout
         self.proxy = None if not proxy else {"http": proxy, "https": proxy}
         self.cookies = cookies
-        self.proxy_url = proxy_url
 
         # Create http session
         self.session = requests.Session()
