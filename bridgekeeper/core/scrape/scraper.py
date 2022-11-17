@@ -70,7 +70,11 @@ class Scraper:
         }
 
         futures = []
-        engines = [BingEngine, DuckDuckGoEngine, GoogleEngine, YahooEngine]
+
+        # NOTE: Disable Bing search engine for the time being as the results
+        #       are quite inconsistent - some results include the employee
+        #       name, but some only include Job Title - Company...
+        engines = [DuckDuckGoEngine, GoogleEngine, YahooEngine]  # , BingEngine
 
         for engine in engines:
             # Apply custom search engine cookies

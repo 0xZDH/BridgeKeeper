@@ -100,7 +100,7 @@ def parse_args() -> argparse.Namespace:
     search_args.add_argument(
         "--bing-cookies",
         type=str,
-        help="string or cookie file for Bing search engine",
+        help="string or cookie file for Bing search engine (disabled)",
     )
     search_args.add_argument(
         "--duckduckgo-cookies",
@@ -190,13 +190,15 @@ def update_args(args: argparse.Namespace) -> argparse.Namespace:
             logging.debug(f"Names file not found, assuming comma delimited list")
             args.names = args.names.split(",")
 
+    # Disabled - still parse, in case we need it in the future, but
+    # remove output
     if args.bing_cookies:
         if check_file(args.bing_cookies):
-            logging.debug(f"Loading Bing cookies from: {args.bing_cookies}")
+            # logging.debug(f"Loading Bing cookies from: {args.bing_cookies}")
             args.bing_cookies = cookie_file_to_dict(args.bing_cookies)
 
         else:
-            logging.debug(f"Bing cookie file not found, assuming comma delimited list")
+            # logging.debug(f"Bing cookie file not found, assuming comma delimited list")
             args.bing_cookies = cookie_str_to_dict(args.bing_cookies)
 
     if args.duckduckgo_cookies:

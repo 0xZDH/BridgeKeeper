@@ -19,7 +19,7 @@ class DuckDuckGoEngine(ScraperEngine):
         # Init engine
         self.engine = "DuckDuckGo"
         self.progress[self.engine] = 0
-        self.url = f"https://links.duckduckgo.com/d.js?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&s="
+        self.url = f"https://links.duckduckgo.com/d.js?q=site%3Alinkedin.com%2Fin%2F+%22-+{self.company}%22&s="
 
         # Send initial request to get
         self.token = None

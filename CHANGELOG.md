@@ -4,4 +4,5 @@
 - Code overhaul
 - Better logging handling
 - Cookie support for all search engines
-- Support for DuckDuckGo search engine
+- Updated search engine parsing
+- Support for fourth search engine: DuckDuckGo

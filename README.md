@@ -49,6 +49,7 @@ Search Engine Configuration:
 
   --bing-cookies BING_COOKIES
                         string or cookie file for Bing search engine
+                        (disabled)
 
   --duckduckgo-cookies DUCKDUCKGO_COOKIES
                         string or cookie file for DuckDuckGo search engine
@@ -96,6 +97,7 @@ Name: John Adams Smith
 ## Features
 
 * Support scraping against four major search engines: Bing, DuckDuckGo, Google, and Yahoo
+  * **Note**: Bing search engine has been disabled for the time being due to inconsistent results
 * Name parsing to strip LinkedIn titles, certs, prefixes, etc.
 * Search engine blacklist evasion via cookie files
 * Username formatting

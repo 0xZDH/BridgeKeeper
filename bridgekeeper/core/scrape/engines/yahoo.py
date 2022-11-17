@@ -19,7 +19,7 @@ class YahooEngine(ScraperEngine):
         # Init engine
         self.engine = "Yahoo"
         self.progress[self.engine] = 0
-        self.url = f"https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&b="
+        self.url = f"https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22-+{self.company}%22&b="
 
     def run(self) -> List[str]:
         """Scrape Yahoo search engine for LinkedIn profiles based
