@@ -19,7 +19,7 @@ class GoogleEngine(ScraperEngine):
         # Init engine
         self.engine = "Google"
         self.progress[self.engine] = 0
-        self.url = f"https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22-+{self.company}%22&start="
+        self.url = f"https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F%20%22%2D%20{self.company}%22&start="
 
     def run(self) -> List[str]:
         """Scrape Google search engine for LinkedIn profiles based

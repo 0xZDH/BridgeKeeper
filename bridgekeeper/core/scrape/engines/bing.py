@@ -19,7 +19,7 @@ class BingEngine(ScraperEngine):
         # Init engine
         self.engine = "Bing"
         self.progress[self.engine] = 0
-        self.url = f"https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22-+{self.company}%22&first="
+        self.url = f"https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F%20%22%2D%20{self.company}%22&first="
 
         # Force required Bing cookie if not already set
         cookie = {"SRCHHPGUSR": "NRSLT=10"}

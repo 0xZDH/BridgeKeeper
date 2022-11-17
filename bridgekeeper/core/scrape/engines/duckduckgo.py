@@ -19,7 +19,7 @@ class DuckDuckGoEngine(ScraperEngine):
         # Init engine
         self.engine = "DuckDuckGo"
         self.progress[self.engine] = 0
-        self.url = f"https://links.duckduckgo.com/d.js?q=site%3Alinkedin.com%2Fin%2F+%22-+{self.company}%22&s="
+        self.url = f"https://links.duckduckgo.com/d.js?q=site%3Alinkedin.com%2Fin%2F%20%22%2D%20{self.company}%22&s="
 
         # Send initial request to get
         self.token = None
@@ -27,7 +27,7 @@ class DuckDuckGoEngine(ScraperEngine):
 
     def _init_req(self):
         """Send initial request to retrieve custom JavaScript generated token"""
-        url_ = f"https://duckduckgo.com/?q=site%3Alinkedin.com%2Fin%2F+%22{self.company}%22&t=h_"
+        url_ = f"https://duckduckgo.com/?q=site%3Alinkedin.com%2Fin%2F%20%22%2D%20{self.company}%22&t=h_"
 
         response = self._http_req(url_)
         if response:
@@ -79,6 +79,15 @@ class DuckDuckGoEngine(ScraperEngine):
                 title_regex = re.findall('"t":"(.+?)",', response)
 
                 if title_regex:
+                    # Account for end of search results via 'EOF'
+                    if len(title_regex) == 1 and "EOF" in title_regex[0]:
+                        # Adjust progress bar accordingly
+                        if self.progress[self.engine] < self.depth:
+                            self.progress[self.engine] = self.depth
+                            self._print_status()
+
+                        break
+
                     # It seems there isn't a super consistent way to move from
                     # page to page as the results are dynamically loaded in chunks,
                     # so we need to get the number of results from the current
