@@ -286,6 +286,7 @@ def main():
         (hunterio_emails, hunterio_format) = hunt(
             domain=args.domain,
             api_key=args.api,
+            output_dir=output_dir,
             timeout=args.timeout,
             proxy=args.proxy,
         )
