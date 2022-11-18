@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import string
 from pathlib import Path
 from typing import (
     Any,
@@ -84,3 +85,29 @@ def file_to_list(f: str) -> List[Any]:
         list_ = [l.strip() for l in f if l.strip() not in [None, ""]]
 
     return list_
+
+
+def check_substring(s: str, sub: str) -> bool:
+    """Check if a substring exists within a given string
+    Ignore punctuations and whitespace (except spaces)
+
+    Arguments:
+        s: primary string
+        sub: substring
+
+    Returns:
+        if the translated substring exists in the string
+    """
+    # Force consistent casing
+    s = s.lower()
+    sub = sub.lower()
+
+    # Build the character set to remove
+    remove_char_set = string.punctuation + string.whitespace
+    remove_char_set = remove_char_set.replace(" ", "")  # Remove spaces
+
+    # Create translation tables
+    s_table = s.maketrans(dict.fromkeys(remove_char_set))
+    sub_table = sub.maketrans(dict.fromkeys(remove_char_set))
+
+    return sub.translate(sub_table) in s.translate(s_table)

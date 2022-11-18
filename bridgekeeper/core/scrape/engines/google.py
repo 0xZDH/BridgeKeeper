@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup  # type: ignore
 from typing import List
 
 from bridgekeeper.core.scrape.engines.base import ScraperEngine
+from bridgekeeper.utils.helper import check_substring
 
 
 class GoogleEngine(ScraperEngine):
@@ -55,7 +56,16 @@ class GoogleEngine(ScraperEngine):
                     for person in search_results:
                         try:
                             name = self._get_name(person.getText())
-                            names.append(self._clean(name))
+                            name = self._clean(name)
+
+                            # While maybe not the best approach, attempt to avoid
+                            # found names that are just job titles ending with the
+                            # company and/or LinkedIn
+                            if (
+                                not check_substring(name, self.company)  # fmt: skip
+                                and not check_substring(name, "linkedin")  # fmt: skip
+                            ):
+                                names.append(name)
 
                         except:
                             pass

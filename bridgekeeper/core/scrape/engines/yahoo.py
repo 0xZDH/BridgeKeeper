@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup  # type: ignore
 from typing import List
 
 from bridgekeeper.core.scrape.engines.base import ScraperEngine
+from bridgekeeper.utils.helper import check_substring
 
 
 class YahooEngine(ScraperEngine):
@@ -57,7 +58,16 @@ class YahooEngine(ScraperEngine):
                             # Ignore <span> that includes
                             # www.linkedin.com › in › firstlast
                             name = self._get_name(person.a.contents[1])
-                            names.append(self._clean(name))
+                            name = self._clean(name)
+
+                            # While maybe not the best approach, attempt to avoid
+                            # found names that are just job titles ending with the
+                            # company and/or LinkedIn
+                            if (
+                                not check_substring(name, self.company)  # fmt: skip
+                                and not check_substring(name, "linkedin")  # fmt: skip
+                            ):
+                                names.append(name)
 
                         except:
                             pass
